@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lavie Spa - Bảng Giá Dịch Vụ</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Noto+Sans:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #FAF6F0;
+    --bg2:       #F0E8D8;
+    --gold:      #96621A;
+    --gold-mid:  #B87D2E;
+    --gold-light:#E8D5A3;
+    --brown:     #3E2310;
+    --brown2:    #5C3A1A;
+    --text:      #2C1A0A;
+    --text2:     #5A3D20;
+    --text3:     #6B4A28;
+    --border:    #CEB992;
+    --card:      #FFFFFF;
+    --card2:     #FDF9F2;
+    --shadow:    rgba(80,40,5,0.10);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── LANGUAGE BAR ── */
+  .lang-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--brown);
+    padding: 9px 12px;
+    display: flex; gap: 6px;
+    overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .lang-bar::-webkit-scrollbar { display:none; }
+
+  .lang-btn {
+    flex-shrink: 0;
+    padding: 6px 13px;
+    border-radius: 18px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    background: transparent;
+    color: #EDD9B0;
+    font-size: 12px; font-weight: 500;
+    font-family: inherit; cursor: pointer;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .lang-btn.active {
+    background: var(--gold-mid);
+    border-color: var(--gold-mid);
+    color: #fff; font-weight: 700;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(160deg, #2E1508 0%, #5C3010 100%);
+    padding: 22px 20px 28px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .header::after {
+    content:''; position:absolute;
+    bottom:0; left:0; right:0; height:18px;
+    background: var(--bg);
+    border-radius: 18px 18px 0 0;
+  }
+
+  .logo-row {
+    display: flex; align-items: center;
+    justify-content: center; gap: 10px;
+    margin-bottom: 4px;
+  }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: var(--gold-mid);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .logo-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700;
+    color: #fff; letter-spacing: 0.5px;
+  }
+  .logo-name span { color: #E8C878; }
+  .logo-tagline {
+    font-size: 12px; color: rgba(255,255,255,0.65);
+    font-style: italic; margin-bottom: 14px;
+  }
+  .header-main-title {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: clamp(20px, 5.5vw, 30px);
+    color: #EDD9A0; line-height: 1.3;
+  }
+  .hdr-div {
+    display: flex; align-items: center; gap: 10px;
+    margin: 8px auto 0; max-width: 160px;
+  }
+  .hdr-div::before, .hdr-div::after {
+    content:''; flex:1; height:1px;
+    background: rgba(255,255,255,0.2);
+  }
+  .hdr-div span { color: #E8C878; font-size: 11px; }
+
+  /* ── CATEGORY TABS ── */
+  .cat-tabs {
+    position: sticky; top: 43px; z-index: 90;
+    background: var(--bg);
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    border-bottom: 2px solid var(--border);
+    box-shadow: 0 2px 6px var(--shadow);
+  }
+  .cat-tabs::-webkit-scrollbar { display:none; }
+
+  .cat-tab {
+    flex-shrink: 0;
+    padding: 11px 15px;
+    font-size: 12.5px; font-weight: 600;
+    color: var(--text3); cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .cat-tab.active {
+    color: var(--gold); border-bottom-color: var(--gold);
+  }
+
+  /* ── CONTENT ── */
+  .content { padding-bottom: 80px; }
+
+  .category-section { display:none; animation: fadeIn 0.25s ease; }
+  .category-section.active { display:block; }
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(5px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── SECTION HEADER ── */
+  .sec-hdr {
+    background: linear-gradient(135deg, var(--brown2) 0%, #8B5020 100%);
+    padding: 15px 20px 13px;
+    text-align: center; margin-bottom: 14px;
+  }
+  .sec-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(17px, 4.5vw, 22px);
+    color: #fff; font-weight: 700;
+  }
+  .sec-note {
+    margin-top: 4px; font-size: 12px;
+    color: rgba(255,255,255,0.82); font-weight: 500;
+  }
+
+  /* ── REGULAR MENU ITEM ── */
+  .menu-items { padding: 0 13px; }
+
+  .menu-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 13px 14px; margin-bottom: 9px;
+    box-shadow: 0 2px 7px var(--shadow);
+    transition: transform 0.15s;
+  }
+  .menu-item:active { transform: scale(0.99); }
+
+  .item-top {
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 10px;
+    margin-bottom: 5px;
+  }
+  .item-name {
+    font-size: 14.5px; font-weight: 700;
+    color: var(--brown); line-height: 1.35; flex: 1;
+  }
+  .item-prices {
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 5px; flex-shrink: 0;
+  }
+  .price-row { display: flex; align-items: center; gap: 6px; }
+  .price-dur {
+    font-size: 11px; font-weight: 600;
+    color: var(--text3);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 2px 7px; border-radius: 10px;
+  }
+  .price-amt {
+    font-size: 15.5px; font-weight: 800;
+    color: var(--gold);
+  }
+  .item-desc {
+    font-size: 12px; color: var(--text3);
+    line-height: 1.55;
+    border-top: 1px solid var(--bg2);
+    padding-top: 6px; margin-top: 2px;
+  }
+
+  /* ── COMBO ITEMS ── */
+  .combo-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    margin: 0 13px 9px;
+    overflow: hidden;
+    box-shadow: 0 2px 7px var(--shadow);
+  }
+  .combo-hdr {
+    display: flex; justify-content: space-between;
+    align-items: center; padding: 11px 14px;
+    background: linear-gradient(90deg, #4A2510, #7A4020);
+  }
+  .combo-name { font-size: 15px; font-weight: 700; color: #fff; }
+  .combo-meta { display: flex; align-items: center; gap: 8px; }
+  .combo-dur {
+    font-size: 11px; font-weight: 600;
+    background: rgba(255,255,255,0.2);
+    color: #fff; padding: 2px 8px; border-radius: 10px;
+  }
+  .combo-price { font-size: 16px; font-weight: 800; color: #EDD9A0; }
+  .combo-body { padding: 11px 14px; background: var(--card2); }
+  .combo-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* ── SKIN CARE LIST ── */
+  .skin-item {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    margin: 0 13px 8px;
+    padding: 12px 14px;
+    display: flex; justify-content: space-between;
+    align-items: center; gap: 10px;
+    box-shadow: 0 1px 5px var(--shadow);
+  }
+  .skin-name { font-size: 14px; font-weight: 700; color: var(--brown); flex:1; }
+  .skin-price { font-size: 15px; font-weight: 800; color: var(--gold); white-space:nowrap; }
+
+  /* ── TABLE (HAIR REMOVAL) ── */
+  .table-wrap { padding: 0 13px 10px; overflow-x: auto; }
+  .menu-table {
+    width: 100%; border-collapse: collapse;
+    border-radius: 11px; overflow: hidden;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .menu-table thead tr { background: var(--brown2); }
+  .menu-table th {
+    padding: 11px 10px;
+    font-size: 12.5px; font-weight: 700;
+    color: #fff; text-align: center;
+  }
+  .menu-table th:first-child { text-align: left; }
+  .menu-table td {
+    padding: 10px 10px;
+    font-size: 13px; font-weight: 500;
+    color: var(--text); text-align: center;
+    border-bottom: 1px solid var(--bg2);
+    background: var(--card);
+  }
+  .menu-table td:first-child {
+    text-align: left; color: var(--brown);
+    font-weight: 700; background: var(--card2);
+  }
+  .menu-table tr:nth-child(even) td { background: var(--bg2); }
+  .menu-table tr:nth-child(even) td:first-child { background: #EDE0C8; }
+  .menu-table td.p-cell { color: var(--gold); font-weight: 800; font-size: 13.5px; }
+
+  /* ── PROMO BOX ── */
+  .promo-box {
+    margin: 10px 13px 6px;
+    background: linear-gradient(135deg, #3E2310, #7A3C10);
+    border-radius: 13px; padding: 16px; text-align: center;
+    box-shadow: 0 4px 14px rgba(60,20,0,0.25);
+  }
+  .promo-title {
+    font-size: 13px; font-weight: 700;
+    color: #EDD9A0; letter-spacing: 1px; margin-bottom: 12px;
+  }
+  .promo-deals { display: flex; gap: 10px; justify-content: center; }
+  .promo-deal {
+    background: var(--gold-mid); color: #fff;
+    border-radius: 10px; padding: 10px 20px;
+    font-weight: 800; font-size: 14.5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+</style>
+</head>
+<body>
+
+<!-- Language Bar -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('vi')" data-lang="vi">🇻🇳 Việt</button>
+  <button class="lang-btn" onclick="setLang('ko')" data-lang="ko">🇰🇷 한국어</button>
+  <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 English</button>
+  <button class="lang-btn" onclick="setLang('ja')" data-lang="ja">🇯🇵 日本語</button>
+  <button class="lang-btn" onclick="setLang('zh')" data-lang="zh">🇨🇳 中文</button>
+  <button class="lang-btn" onclick="setLang('th')" data-lang="th">🇹🇭 ไทย</button>
+  <button class="lang-btn" onclick="setLang('ms')" data-lang="ms">🇲🇾 Melayu</button>
+  <button class="lang-btn" onclick="setLang('ru')" data-lang="ru">🇷🇺 Рус</button>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo-row">
+    <div class="logo-icon">🌿</div>
+    <div class="logo-name">Lavie <span>Spa</span></div>
+  </div>
+  <div class="logo-tagline">Vui về khi đến, khoẻ đẹp khi về</div>
+  <div class="header-main-title" id="hdr-title">Bảng Giá Dịch Vụ</div>
+  <div class="hdr-div"><span>✦</span></div>
+</div>
+
+<!-- Category Tabs -->
+<div class="cat-tabs" id="catTabs"></div>
+
+<!-- Content -->
+<div class="content" id="content"></div>
+
+<script>
+// ============================================================
+// MENU DATA
+// ============================================================
+const menuData = {
+  categories: [
+    {
+      id: 'massage_tri_lieu', icon: '💆', nameVi: 'Massage Trị Liệu',
+      items: [
+        { nameVi:'Massage cổ vai gáy trị liệu', descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay + đá nóng + dầu trị liệu + đắp mắt thảo dược', prices:[{duration:'60',amount:'250k'},{duration:'90',amount:'300k'}] },
+        { nameVi:'Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu', descVi:'Ngâm chân thảo dược + massage trị liệu + dầu trị liệu + đá nóng + đắp mắt thảo dược + xông hơi', prices:[{duration:'90',amount:'350k'}] },
+        { nameVi:'Massage chân thư giãn', descVi:'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược', prices:[{duration:'60',amount:'250k'}] },
+        { nameVi:'Massage chân trị liệu', descVi:'Ngâm chân thảo dược + massage + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược', prices:[{duration:'90',amount:'350k'}] },
+        { nameVi:'Massage trị liệu thắt lưng eo', descVi:'Ngâm chân thảo dược + massage thắt lưng eo - chân + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược', prices:[{duration:'60',amount:'350k'},{duration:'90',amount:'450k'}] }
+      ]
+    },
+    {
+      id: 'body', icon: '🌿', nameVi: 'Body Massage', noteVi: true,
+      items: [
+        { nameVi:'Massage Body Aroma Therapy', descVi:'Ngâm chân thảo dược + massage + đắp mắt thảo dược', prices:[{duration:'70',amount:'300k'}] },
+        { nameVi:'Massage Body đá nóng', descVi:'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược', prices:[{duration:'90',amount:'350k'}] },
+        { nameVi:'Massage Body trị liệu', descVi:'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + xông hơi', prices:[{duration:'110',amount:'400k'}] },
+        { nameVi:'Massage Body Thụy Điển (chuyên sâu)', descVi:'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + đắp cao thảo dược', prices:[{duration:'120',amount:'450k'}] },
+        { nameVi:'Massage bầu dưỡng sinh', descVi:'Massage chuyên biệt cho bà bầu', prices:[{duration:'60',amount:'300k'},{duration:'90',amount:'350k'},{duration:'120',amount:'450k'}] },
+        { nameVi:'Xông hơi đá muối', descVi:'Xông hơi với đá muối himalaya', prices:[{duration:'20-40',amount:'150k'}] }
+      ]
+    },
+    {
+      id: 'dien_chan', icon: '✨', nameVi: 'Diện Chẩn', promo: true,
+      items: [
+        { nameVi:'Mặt', descVi:'Diện chẩn vùng mặt', prices:[{duration:'45-60',amount:'200k'}] },
+        { nameVi:'Vai gáy', descVi:'Diện chẩn vùng vai gáy', prices:[{duration:'60',amount:'250k'},{duration:'90',amount:'300k'}] },
+        { nameVi:'Lưng', descVi:'Diện chẩn vùng lưng', prices:[{duration:'60',amount:'350k'}] },
+        { nameVi:'Full body', descVi:'Diện chẩn toàn thân', prices:[{duration:'120',amount:'400k'},{duration:'150',amount:'500k'}] }
+      ]
+    },
+    {
+      id: 'goi_dau', icon: '💇', nameVi: 'Gội Đầu Dưỡng Sinh',
+      combos: [
+        {nameVi:'Combo 1',duration:'60',amount:'150k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược'},
+        {nameVi:'Combo 2',duration:'70',amount:'180k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược'},
+        {nameVi:'Combo 3',duration:'90',amount:'250k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược'},
+        {nameVi:'Combo 4',duration:'110',amount:'350k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược'},
+        {nameVi:'Combo 5',duration:'120',amount:'400k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + massage mặt + đắp cao thảo dược + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược'},
+        {nameVi:'Combo 6',duration:'140',amount:'450k',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + massage tay chuyên sâu + massage chân + xông hơi hút mụn bã nhờn + đắp mắt thảo dược + dẫn khí trị liệu + massage mặt + đắp mặt nạ + gội đầu thảo dược'}
+      ]
+    },
+    {
+      id: 'cham_soc_da', icon: '🌸', nameVi: 'Chăm Sóc Da',
+      skinItems: [
+        {nameVi:'Chăm sóc da cơ bản',amount:'100k'},
+        {nameVi:'Chăm sóc thư giãn',amount:'200k'},
+        {nameVi:'Chăm sóc da chuyên sâu',amount:'350k'},
+        {nameVi:'Nặn mụn chuẩn y khoa',amount:'250k - 500k'},
+        {nameVi:'Cấy tảo',amount:'400k'},
+        {nameVi:'Phun nốt ruồi phong thuỷ',amount:'400k'},
+        {nameVi:'Đốt nốt ruồi',amount:'50k - 500k'},
+        {nameVi:'Tắm dưỡng body',amount:'500k'},
+        {nameVi:'Làm hồng nhũ hoa',amount:'3.000k'},
+        {nameVi:'Khử thâm bikini',amount:'4.500k'}
+      ]
+    },
+    {
+      id: 'triet_long', icon: '⚡', nameVi: 'Triệt Lông',
+      tableRows: [
+        {posVi:'Nách',lt10:'1.000.000',lifetime:'2.500.000'},
+        {posVi:'Mép',lt10:'1.000.000',lifetime:'2.500.000'},
+        {posVi:'Mặt',lt10:'2.000.000',lifetime:'4.500.000'},
+        {posVi:'1/2 tay',lt10:'2.000.000',lifetime:'4.500.000'},
+        {posVi:'Cả tay',lt10:'3.000.000',lifetime:'5.500.000'},
+        {posVi:'1/2 chân',lt10:'3.000.000',lifetime:'5.500.000'},
+        {posVi:'Cả chân',lt10:'4.000.000',lifetime:'6.500.000'},
+        {posVi:'Bikini',lt10:'3.000.000',lifetime:'5.500.000'},
+        {posVi:'Bụng - Ngực',lt10:'3.500.000',lifetime:'6.000.000'},
+        {posVi:'Lưng',lt10:'4.000.000',lifetime:'6.500.000'},
+        {posVi:'Toàn thân',lt10:'16.000.000',lifetime:'21.000.000'}
+      ]
+    }
+  ]
+};
+
+// ============================================================
+// TRANSLATIONS
+// ============================================================
+const T = {
+  vi:{
+    title:'Bảng Giá Dịch Vụ',min:'phút',noteMale:'★ Khách nam phụ thu thêm 50k/người',
+    promoTitle:'Khi mua liệu trình',promoDeals:['Mua 5 tặng 1','Mua 10 tặng 2'],
+    lt10:'LT (10 buổi)',lifetime:'Trọn đời',position:'Vị trí',
+    cats:{massage_tri_lieu:'Massage Trị Liệu',body:'Body Massage',dien_chan:'Diện Chẩn',goi_dau:'Gội Đầu',cham_soc_da:'Chăm Sóc Da',triet_long:'Triệt Lông'},
+    items:{'Massage cổ vai gáy trị liệu':'Massage cổ vai gáy trị liệu','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu','Massage chân thư giãn':'Massage chân thư giãn','Massage chân trị liệu':'Massage chân trị liệu','Massage trị liệu thắt lưng eo':'Massage trị liệu thắt lưng eo','Massage Body Aroma Therapy':'Massage Body Aroma Therapy','Massage Body đá nóng':'Massage Body đá nóng','Massage Body trị liệu':'Massage Body trị liệu','Massage Body Thụy Điển (chuyên sâu)':'Massage Body Thụy Điển (chuyên sâu)','Massage bầu dưỡng sinh':'Massage bầu dưỡng sinh','Xông hơi đá muối':'Xông hơi đá muối','Mặt':'Mặt','Vai gáy':'Vai gáy','Lưng':'Lưng','Full body':'Full body','Chăm sóc da cơ bản':'Chăm sóc da cơ bản','Chăm sóc thư giãn':'Chăm sóc thư giãn','Chăm sóc da chuyên sâu':'Chăm sóc da chuyên sâu','Nặn mụn chuẩn y khoa':'Nặn mụn chuẩn y khoa','Cấy tảo':'Cấy tảo','Phun nốt ruồi phong thuỷ':'Phun nốt ruồi phong thuỷ','Đốt nốt ruồi':'Đốt nốt ruồi','Tắm dưỡng body':'Tắm dưỡng body','Làm hồng nhũ hoa':'Làm hồng nhũ hoa','Khử thâm bikini':'Khử thâm bikini','Nách':'Nách','Mép':'Mép','1/2 tay':'1/2 tay','Cả tay':'Cả tay','1/2 chân':'1/2 chân','Cả chân':'Cả chân','Bikini':'Bikini','Bụng - Ngực':'Bụng - Ngực','Toàn thân':'Toàn thân'},
+    desc:{'Massage cổ vai gáy trị liệu':'Ngâm chân thảo dược + massage cổ vai gáy - tay + đá nóng + dầu trị liệu + đắp mắt thảo dược','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Ngâm chân thảo dược + massage trị liệu + dầu trị liệu + đá nóng + đắp mắt thảo dược + xông hơi','Massage chân thư giãn':'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược','Massage chân trị liệu':'Ngâm chân thảo dược + massage + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược','Massage trị liệu thắt lưng eo':'Ngâm chân thảo dược + massage thắt lưng eo - chân + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược','Massage Body Aroma Therapy':'Ngâm chân thảo dược + massage + đắp mắt thảo dược','Massage Body đá nóng':'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược','Massage Body trị liệu':'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + xông hơi','Massage Body Thụy Điển (chuyên sâu)':'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + đắp cao thảo dược','Massage bầu dưỡng sinh':'Massage chuyên biệt cho bà bầu','Xông hơi đá muối':'Xông hơi với đá muối himalaya','Mặt':'Diện chẩn vùng mặt','Vai gáy':'Diện chẩn vùng vai gáy','Lưng':'Diện chẩn vùng lưng','Full body':'Diện chẩn toàn thân'},
+    comboDesc:{'Combo 1':'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược','Combo 2':'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược','Combo 3':'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược','Combo 4':'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược','Combo 5':'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + massage mặt + đắp cao thảo dược + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược','Combo 6':'Ngâm chân thảo dược + massage cổ vai gáy + massage tay chuyên sâu + massage chân + xông hơi hút mụn bã nhờn + đắp mắt thảo dược + dẫn khí trị liệu + massage mặt + đắp mặt nạ + gội đầu thảo dược'}
+  },
+  ko:{
+    title:'서비스 가격표',min:'분',noteMale:'★ 남성 고객 50k 추가',
+    promoTitle:'패키지 구매 혜택',promoDeals:['5회 구매 시 1회 증정','10회 구매 시 2회 증정'],
+    lt10:'10회 패키지',lifetime:'평생',position:'부위',
+    cats:{massage_tri_lieu:'치료 마사지',body:'바디 마사지',dien_chan:'얼굴 침술',goi_dau:'두피 케어',cham_soc_da:'피부 관리',triet_long:'제모'},
+    items:{'Massage cổ vai gáy trị liệu':'목·어깨·등 치료 마사지','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'경락 소통 심층 (등·어깨·목·팔)','Massage chân thư giãn':'발 이완 마사지','Massage chân trị liệu':'발 치료 마사지','Massage trị liệu thắt lưng eo':'허리 치료 마사지','Massage Body Aroma Therapy':'아로마 바디 마사지','Massage Body đá nóng':'핫스톤 바디 마사지','Massage Body trị liệu':'치료 바디 마사지','Massage Body Thụy Điển (chuyên sâu)':'스웨디시 바디 마사지 (딥티슈)','Massage bầu dưỡng sinh':'산전 마사지','Xông hơi đá muối':'소금 돌 사우나','Mặt':'얼굴','Vai gáy':'어깨·목','Lưng':'등','Full body':'전신','Chăm sóc da cơ bản':'기본 피부 관리','Chăm sóc thư giãn':'릴렉싱 피부 관리','Chăm sóc da chuyên sâu':'심층 피부 관리','Nặn mụn chuẩn y khoa':'의학적 여드름 압출','Cấy tảo':'조류 세럼 트리트먼트','Phun nốt ruồi phong thuỷ':'풍수 점 타투','Đốt nốt ruồi':'점 제거','Tắm dưỡng body':'바디 목욕 트리트먼트','Làm hồng nhũ hoa':'유두 미백','Khử thâm bikini':'비키니 미백','Nách':'겨드랑이','Mép':'입술 주변','1/2 tay':'반팔','Cả tay':'팔 전체','1/2 chân':'반다리','Cả chân':'다리 전체','Bikini':'비키니','Bụng - Ngực':'배·가슴','Toàn thân':'전신'},
+    desc:{'Massage cổ vai gáy trị liệu':'약초 족욕 + 목·어깨·손 마사지 + 핫스톤 + 치료 오일 + 약초 눈 패치','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'약초 족욕 + 치료 마사지 + 치료 오일 + 핫스톤 + 약초 눈 패치 + 스팀','Massage chân thư giãn':'약초 족욕 + 마사지 + 핫스톤 + 약초 눈 패치','Massage chân trị liệu':'약초 족욕 + 마사지 + 치료 오일 + 핫스톤 + 허브 찜질 + 약초 눈 패치','Massage trị liệu thắt lưng eo':'약초 족욕 + 허리·발 마사지 + 치료 오일 + 핫스톤 + 허브 찜질 + 약초 눈 패치','Massage Body Aroma Therapy':'약초 족욕 + 마사지 + 약초 눈 패치','Massage Body đá nóng':'약초 족욕 + 마사지 + 핫스톤 + 약초 눈 패치','Massage Body trị liệu':'약초 족욕 + 마사지 + 핫스톤 + 치료 오일 + 스팀','Massage Body Thụy Điển (chuyên sâu)':'약초 족욕 + 마사지 + 핫스톤 + 치료 오일 + 허브 크림','Massage bầu dưỡng sinh':'산전 전용 마사지','Xông hơi đá muối':'히말라야 소금 돌 스팀','Mặt':'얼굴 침술 치료','Vai gáy':'어깨·목 침술','Lưng':'등 침술 치료','Full body':'전신 침술'},
+    comboDesc:{'Combo 1':'약초 족욕 + 어깨·목 마사지 + 약초 눈 패치 + 기 치료 + 허브 샴푸','Combo 2':'약초 족욕 + 어깨·목 마사지 + 눈 패치 + 기 치료 + 마스크팩 + 허브 샴푸','Combo 3':'약초 족욕 + 어깨·목·손 심층 마사지 + 눈 패치 + 기 치료 + 마스크팩 + 허브 샴푸','Combo 4':'약초 족욕 + 어깨·목·손 심층 마사지 + 눈 패치 + 기 치료 + 마스크팩 + 허브 샴푸','Combo 5':'약초 족욕 + 어깨·목·손 심층 마사지 + 페이셜 마사지 + 허브 크림 + 눈 패치 + 기 치료 + 허브 샴푸','Combo 6':'약초 족욕 + 어깨·목 마사지 + 심층 손 마사지 + 발 마사지 + 모공 스팀 + 눈 패치 + 기 치료 + 페이셜 마사지 + 마스크팩 + 허브 샴푸'}
+  },
+  en:{
+    title:'Service Price List',min:'min',noteMale:'★ Male guests: +50k surcharge',
+    promoTitle:'Treatment Package Deal',promoDeals:['Buy 5 Get 1 Free','Buy 10 Get 2 Free'],
+    lt10:'10 Sessions',lifetime:'Lifetime',position:'Area',
+    cats:{massage_tri_lieu:'Therapeutic Massage',body:'Body Massage',dien_chan:'Facial Acupressure',goi_dau:'Hair Care',cham_soc_da:'Skin Care',triet_long:'Hair Removal'},
+    items:{'Massage cổ vai gáy trị liệu':'Neck & Shoulder Therapeutic Massage','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Deep Meridian Back, Shoulder & Arm Therapy','Massage chân thư giãn':'Relaxing Foot Massage','Massage chân trị liệu':'Therapeutic Foot Massage','Massage trị liệu thắt lưng eo':'Lumbar & Waist Therapeutic Massage','Massage Body Aroma Therapy':'Aroma Therapy Body Massage','Massage Body đá nóng':'Hot Stone Body Massage','Massage Body trị liệu':'Therapeutic Body Massage','Massage Body Thụy Điển (chuyên sâu)':'Swedish Body Massage (Deep Tissue)','Massage bầu dưỡng sinh':'Prenatal Massage','Xông hơi đá muối':'Salt Stone Sauna','Mặt':'Face','Vai gáy':'Shoulder & Neck','Lưng':'Back','Full body':'Full Body','Chăm sóc da cơ bản':'Basic Skin Care','Chăm sóc thư giãn':'Relaxing Skin Care','Chăm sóc da chuyên sâu':'Deep Skin Care','Nặn mụn chuẩn y khoa':'Medical-Grade Acne Extraction','Cấy tảo':'Algae Serum Treatment','Phun nốt ruồi phong thuỷ':'Feng Shui Mole Tattoo','Đốt nốt ruồi':'Mole Removal','Tắm dưỡng body':'Body Bath Treatment','Làm hồng nhũ hoa':'Nipple Brightening','Khử thâm bikini':'Bikini Brightening','Nách':'Underarm','Mép':'Upper Lip','1/2 tay':'Half Arm','Cả tay':'Full Arm','1/2 chân':'Half Leg','Cả chân':'Full Leg','Bikini':'Bikini','Bụng - Ngực':'Abdomen & Chest','Toàn thân':'Full Body'},
+    desc:{'Massage cổ vai gáy trị liệu':'Herbal foot soak + neck, shoulder & arm massage + hot stone + therapeutic oil + herbal eye patch','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Herbal foot soak + therapeutic massage + oil + hot stone + herbal eye patch + steam','Massage chân thư giãn':'Herbal foot soak + massage + hot stone + herbal eye patch','Massage chân trị liệu':'Herbal foot soak + massage + therapeutic oil + hot stone + herbal compress + eye patch','Massage trị liệu thắt lưng eo':'Herbal foot soak + waist & leg massage + therapeutic oil + hot stone + herbal compress + eye patch','Massage Body Aroma Therapy':'Herbal foot soak + massage + herbal eye patch','Massage Body đá nóng':'Herbal foot soak + massage + hot stone + herbal eye patch','Massage Body trị liệu':'Herbal foot soak + massage + hot stone + therapeutic oil + steam','Massage Body Thụy Điển (chuyên sâu)':'Herbal foot soak + massage + hot stone + therapeutic oil + herbal compress','Massage bầu dưỡng sinh':'Specialized massage for pregnant women','Xông hơi đá muối':'Himalayan salt stone steam','Mặt':'Facial acupressure treatment','Vai gáy':'Shoulder & neck acupressure','Lưng':'Back acupressure treatment','Full body':'Full body acupressure'},
+    comboDesc:{'Combo 1':'Herbal foot soak + neck & shoulder massage + herbal eye patch + qi therapy + herbal hair wash','Combo 2':'Herbal foot soak + neck & shoulder massage + eye patch + qi therapy + face mask + herbal hair wash','Combo 3':'Herbal foot soak + deep neck, shoulder & arm massage + eye patch + qi therapy + face mask + herbal hair wash','Combo 4':'Herbal foot soak + deep neck, shoulder & arm massage + eye patch + qi therapy + face mask + herbal hair wash','Combo 5':'Herbal foot soak + deep neck, shoulder & arm massage + facial massage + herbal compress + eye patch + qi therapy + herbal hair wash','Combo 6':'Herbal foot soak + shoulder & neck massage + deep arm massage + foot massage + pore steam + eye patch + qi therapy + facial massage + face mask + herbal hair wash'}
+  },
+  ja:{
+    title:'サービス料金表',min:'分',noteMale:'★ 男性のお客様 +50k 追加料金',
+    promoTitle:'コース購入特典',promoDeals:['5回購入で1回プレゼント','10回購入で2回プレゼント'],
+    lt10:'10回コース',lifetime:'永久脱毛',position:'部位',
+    cats:{massage_tri_lieu:'治療マッサージ',body:'ボディマッサージ',dien_chan:'顔面鍼',goi_dau:'ヘアケア',cham_soc_da:'スキンケア',triet_long:'脱毛'},
+    items:{'Massage cổ vai gáy trị liệu':'首・肩・首筋 治療マッサージ','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'経絡疏通 背・肩・首・腕 深層','Massage chân thư giãn':'リラクゼーション フットマッサージ','Massage chân trị liệu':'治療 フットマッサージ','Massage trị liệu thắt lưng eo':'腰・ウエスト 治療マッサージ','Massage Body Aroma Therapy':'アロマセラピー ボディマッサージ','Massage Body đá nóng':'ホットストーン ボディマッサージ','Massage Body trị liệu':'治療 ボディマッサージ','Massage Body Thụy Điển (chuyên sâu)':'スウェーデン式ボディマッサージ（深層）','Massage bầu dưỡng sinh':'妊婦向けマッサージ','Xông hơi đá muối':'岩塩スチーム','Mặt':'顔','Vai gáy':'肩・首','Lưng':'背中','Full body':'全身','Chăm sóc da cơ bản':'ベーシックスキンケア','Chăm sóc thư giãn':'リラクゼーション スキンケア','Chăm sóc da chuyên sâu':'ディープスキンケア','Nặn mụn chuẩn y khoa':'医療グレード ニキビ除去','Cấy tảo':'藻類精華トリートメント','Phun nốt ruồi phong thuỷ':'風水ほくろタトゥー','Đốt nốt ruồi':'ほくろ除去','Tắm dưỡng body':'ボディバストリートメント','Làm hồng nhũ hoa':'乳首ピンク化','Khử thâm bikini':'ビキニライン美白','Nách':'ワキ','Mép':'口周り','1/2 tay':'半腕','Cả tay':'全腕','1/2 chân':'半足','Cả chân':'全足','Bikini':'ビキニ','Bụng - Ngực':'お腹・胸','Toàn thân':'全身'},
+    desc:{'Massage cổ vai gáy trị liệu':'ハーブ足浴 + 首・肩・腕マッサージ + ホットストーン + 治療オイル + ハーブアイパッチ','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'ハーブ足浴 + 治療マッサージ + オイル + ホットストーン + アイパッチ + スチーム','Massage chân thư giãn':'ハーブ足浴 + マッサージ + ホットストーン + ハーブアイパッチ','Massage chân trị liệu':'ハーブ足浴 + マッサージ + 治療オイル + ホットストーン + ハーブ湿布 + アイパッチ','Massage trị liệu thắt lưng eo':'ハーブ足浴 + 腰・足マッサージ + 治療オイル + ホットストーン + ハーブ湿布 + アイパッチ','Massage Body Aroma Therapy':'ハーブ足浴 + マッサージ + ハーブアイパッチ','Massage Body đá nóng':'ハーブ足浴 + マッサージ + ホットストーン + ハーブアイパッチ','Massage Body trị liệu':'ハーブ足浴 + マッサージ + ホットストーン + 治療オイル + スチーム','Massage Body Thụy Điển (chuyên sâu)':'ハーブ足浴 + マッサージ + ホットストーン + 治療オイル + ハーブ湿布','Massage bầu dưỡng sinh':'妊婦専用マッサージ','Xông hơi đá muối':'ヒマラヤ岩塩スチーム','Mặt':'顔面鍼治療','Vai gáy':'肩・首の鍼治療','Lưng':'背中の鍼治療','Full body':'全身鍼治療'},
+    comboDesc:{'Combo 1':'ハーブ足浴 + 首・肩マッサージ + ハーブアイパッチ + 気功治療 + ハーブシャンプー','Combo 2':'ハーブ足浴 + 首・肩マッサージ + アイパッチ + 気功治療 + フェイスマスク + ハーブシャンプー','Combo 3':'ハーブ足浴 + 深層 首・肩・腕マッサージ + アイパッチ + 気功治療 + フェイスマスク + ハーブシャンプー','Combo 4':'ハーブ足浴 + 深層 首・肩・腕マッサージ + アイパッチ + 気功治療 + フェイスマスク + ハーブシャンプー','Combo 5':'ハーブ足浴 + 深層 首・肩・腕マッサージ + フェイシャルマッサージ + ハーブ湿布 + アイパッチ + 気功治療 + ハーブシャンプー','Combo 6':'ハーブ足浴 + 首・肩マッサージ + 深層腕マッサージ + 足マッサージ + 毛穴スチーム + アイパッチ + 気功治療 + フェイシャルマッサージ + フェイスマスク + ハーブシャンプー'}
+  },
+  zh:{
+    title:'服务价目表',min:'分钟',noteMale:'★ 男性顾客额外收费 50k/人',
+    promoTitle:'购买疗程优惠',promoDeals:['买5送1','买10送2'],
+    lt10:'10次疗程',lifetime:'终身',position:'部位',
+    cats:{massage_tri_lieu:'理疗按摩',body:'全身按摩',dien_chan:'面部针灸',goi_dau:'护发套餐',cham_soc_da:'皮肤护理',triet_long:'脱毛'},
+    items:{'Massage cổ vai gáy trị liệu':'颈肩理疗按摩','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'深层经络疏通（背·肩·颈·臂）','Massage chân thư giãn':'足部放松按摩','Massage chân trị liệu':'足部理疗按摩','Massage trị liệu thắt lưng eo':'腰部理疗按摩','Massage Body Aroma Therapy':'芳香疗法全身按摩','Massage Body đá nóng':'热石全身按摩','Massage Body trị liệu':'理疗全身按摩','Massage Body Thụy Điển (chuyên sâu)':'瑞典式全身按摩（深层）','Massage bầu dưỡng sinh':'孕妇按摩','Xông hơi đá muối':'盐石蒸汽浴','Mặt':'面部','Vai gáy':'肩颈','Lưng':'背部','Full body':'全身','Chăm sóc da cơ bản':'基础皮肤护理','Chăm sóc thư giãn':'放松皮肤护理','Chăm sóc da chuyên sâu':'深层皮肤护理','Nặn mụn chuẩn y khoa':'医疗级粉刺清除','Cấy tảo':'藻类精华治疗','Phun nốt ruồi phong thuỷ':'风水痣纹身','Đốt nốt ruồi':'去痣','Tắm dưỡng body':'全身浴疗','Làm hồng nhũ hoa':'乳头粉嫩','Khử thâm bikini':'比基尼美白','Nách':'腋下','Mép':'嘴角','1/2 tay':'半臂','Cả tay':'全臂','1/2 chân':'半腿','Cả chân':'全腿','Bikini':'比基尼','Bụng - Ngực':'腹·胸','Toàn thân':'全身'},
+    desc:{'Massage cổ vai gáy trị liệu':'草药足浴 + 颈肩臂按摩 + 热石 + 理疗精油 + 草药眼贴','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'草药足浴 + 理疗按摩 + 精油 + 热石 + 草药眼贴 + 蒸汽','Massage chân thư giãn':'草药足浴 + 按摩 + 热石 + 草药眼贴','Massage chân trị liệu':'草药足浴 + 按摩 + 理疗精油 + 热石 + 草药敷贴 + 眼贴','Massage trị liệu thắt lưng eo':'草药足浴 + 腰腿按摩 + 理疗精油 + 热石 + 草药敷贴 + 眼贴','Massage Body Aroma Therapy':'草药足浴 + 按摩 + 草药眼贴','Massage Body đá nóng':'草药足浴 + 按摩 + 热石 + 草药眼贴','Massage Body trị liệu':'草药足浴 + 按摩 + 热石 + 理疗精油 + 蒸汽','Massage Body Thụy Điển (chuyên sâu)':'草药足浴 + 按摩 + 热石 + 理疗精油 + 草药敷贴','Massage bầu dưỡng sinh':'专为孕妇设计的按摩','Xông hơi đá muối':'喜马拉雅盐石蒸汽','Mặt':'面部针灸治疗','Vai gáy':'肩颈针灸','Lưng':'背部针灸','Full body':'全身针灸'},
+    comboDesc:{'Combo 1':'草药足浴 + 颈肩按摩 + 草药眼贴 + 气功理疗 + 草药洗发','Combo 2':'草药足浴 + 颈肩按摩 + 眼贴 + 气功理疗 + 面膜 + 草药洗发','Combo 3':'草药足浴 + 深层颈肩臂按摩 + 眼贴 + 气功理疗 + 面膜 + 草药洗发','Combo 4':'草药足浴 + 深层颈肩臂按摩 + 眼贴 + 气功理疗 + 面膜 + 草药洗发','Combo 5':'草药足浴 + 深层颈肩臂按摩 + 面部按摩 + 草药敷贴 + 眼贴 + 气功理疗 + 草药洗发','Combo 6':'草药足浴 + 颈肩按摩 + 深层手臂按摩 + 足部按摩 + 蒸汽清洁 + 草药眼贴 + 气功理疗 + 面部按摩 + 面膜 + 草药洗发'}
+  },
+  th:{
+    title:'รายการราคาบริการ',min:'นาที',noteMale:'★ ลูกค้าชาย เพิ่ม 50k/คน',
+    promoTitle:'โปรโมชั่นซื้อโปรแกรม',promoDeals:['ซื้อ 5 แถม 1','ซื้อ 10 แถม 2'],
+    lt10:'10 ครั้ง',lifetime:'ตลอดชีพ',position:'ตำแหน่ง',
+    cats:{massage_tri_lieu:'นวดบำบัด',body:'นวดบอดี้',dien_chan:'กดจุดหน้า',goi_dau:'ดูแลผม',cham_soc_da:'ดูแลผิว',triet_long:'กำจัดขน'},
+    items:{'Massage cổ vai gáy trị liệu':'นวดบำบัดคอ ไหล่ และต้นคอ','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'กระตุ้นเส้นลมปราณ หลัง ไหล่ คอ แขน (ลึก)','Massage chân thư giãn':'นวดเท้าผ่อนคลาย','Massage chân trị liệu':'นวดเท้าบำบัด','Massage trị liệu thắt lưng eo':'นวดบำบัดเอว','Massage Body Aroma Therapy':'นวดอโรมาเทอราพี','Massage Body đá nóng':'นวดหินร้อน','Massage Body trị liệu':'นวดบำบัดบอดี้','Massage Body Thụy Điển (chuyên sâu)':'นวดสวีดิช (ลึก)','Massage bầu dưỡng sinh':'นวดสำหรับคุณแม่ตั้งครรภ์','Xông hơi đá muối':'ซาวน่าหินเกลือ','Mặt':'ใบหน้า','Vai gáy':'ไหล่และคอ','Lưng':'หลัง','Full body':'ทั้งตัว','Chăm sóc da cơ bản':'ดูแลผิวพื้นฐาน','Chăm sóc thư giãn':'ดูแลผิวผ่อนคลาย','Chăm sóc da chuyên sâu':'ดูแลผิวเชิงลึก','Nặn mụn chuẩn y khoa':'บีบสิวมาตรฐานทางการแพทย์','Cấy tảo':'ทรีตเมนต์สาหร่าย','Phun nốt ruồi phong thuỷ':'สักไฝฮวงจุ้ย','Đốt nốt ruồi':'เผาไฝ','Tắm dưỡng body':'ทรีตเมนต์อาบน้ำบอดี้','Làm hồng nhũ hoa':'ทำหัวนมชมพู','Khử thâm bikini':'บิกินี่วิเทนนิ่ง','Nách':'รักแร้','Mép':'เหนือปาก','1/2 tay':'แขนครึ่ง','Cả tay':'แขนทั้งหมด','1/2 chân':'ขาครึ่ง','Cả chân':'ขาทั้งหมด','Bikini':'บิกินี่','Bụng - Ngực':'ท้อง-หน้าอก','Toàn thân':'ทั้งตัว'},
+    desc:{},comboDesc:{}
+  },
+  ms:{
+    title:'Senarai Harga Perkhidmatan',min:'minit',noteMale:'★ Pelanggan lelaki +50k/orang',
+    promoTitle:'Promosi Pakej Rawatan',promoDeals:['Beli 5 Dapat 1','Beli 10 Dapat 2'],
+    lt10:'10 Sesi',lifetime:'Seumur Hidup',position:'Kawasan',
+    cats:{massage_tri_lieu:'Urutan Terapeutik',body:'Urutan Badan',dien_chan:'Akupresur Muka',goi_dau:'Penjagaan Rambut',cham_soc_da:'Penjagaan Kulit',triet_long:'Buang Bulu'},
+    items:{'Massage cổ vai gáy trị liệu':'Urutan Terapeutik Leher & Bahu','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Terapi Meridian Dalam Belakang, Bahu & Lengan','Massage chân thư giãn':'Urutan Kaki Relaks','Massage chân trị liệu':'Urutan Kaki Terapeutik','Massage trị liệu thắt lưng eo':'Urutan Terapeutik Pinggang','Massage Body Aroma Therapy':'Urutan Badan Aroma','Massage Body đá nóng':'Urutan Badan Batu Panas','Massage Body trị liệu':'Urutan Badan Terapeutik','Massage Body Thụy Điển (chuyên sâu)':'Urutan Badan Sweden (Dalam)','Massage bầu dưỡng sinh':'Urutan Ibu Mengandung','Xông hơi đá muối':'Sauna Batu Garam','Mặt':'Muka','Vai gáy':'Bahu & Leher','Lưng':'Belakang','Full body':'Seluruh Badan','Chăm sóc da cơ bản':'Penjagaan Kulit Asas','Chăm sóc thư giãn':'Penjagaan Kulit Relaks','Chăm sóc da chuyên sâu':'Penjagaan Kulit Mendalam','Nặn mụn chuẩn y khoa':'Rawatan Jerawat Perubatan','Cấy tảo':'Rawatan Alga','Phun nốt ruồi phong thuỷ':'Tatu Tahi Lalat Feng Shui','Đốt nốt ruồi':'Buang Tahi Lalat','Tắm dưỡng body':'Rawatan Mandi Badan','Làm hồng nhũ hoa':'Pencerah Puting','Khử thâm bikini':'Pencerah Bikini','Nách':'Ketiak','Mép':'Atas Bibir','1/2 tay':'Separuh Lengan','Cả tay':'Lengan Penuh','1/2 chân':'Separuh Kaki','Cả chân':'Kaki Penuh','Bikini':'Bikini','Bụng - Ngực':'Perut & Dada','Toàn thân':'Seluruh Badan'},
+    desc:{},comboDesc:{}
+  },
+  ru:{
+    title:'Прайс-лист услуг',min:'мин',noteMale:'★ Мужчины: доплата 50k/чел',
+    promoTitle:'Акция на курс процедур',promoDeals:['Купи 5 - получи 1','Купи 10 - получи 2'],
+    lt10:'10 Сеансов',lifetime:'Пожизненно',position:'Зона',
+    cats:{massage_tri_lieu:'Лечебный массаж',body:'Массаж тела',dien_chan:'Акупрессура лица',goi_dau:'Уход за волосами',cham_soc_da:'Уход за кожей',triet_long:'Эпиляция'},
+    items:{'Massage cổ vai gáy trị liệu':'Лечебный массаж шеи и плеч','Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu':'Глубокий меридиональный массаж спины, плеч, шеи','Massage chân thư giãn':'Расслабляющий массаж ног','Massage chân trị liệu':'Лечебный массаж ног','Massage trị liệu thắt lưng eo':'Лечебный массаж поясницы','Massage Body Aroma Therapy':'Ароматерапевтический массаж тела','Massage Body đá nóng':'Массаж горячими камнями','Massage Body trị liệu':'Лечебный массаж тела','Massage Body Thụy Điển (chuyên sâu)':'Шведский массаж (глубокий)','Massage bầu dưỡng sinh':'Массаж для беременных','Xông hơi đá muối':'Соляная сауна','Mặt':'Лицо','Vai gáy':'Плечи и шея','Lưng':'Спина','Full body':'Всё тело','Chăm sóc da cơ bản':'Базовый уход за кожей','Chăm sóc thư giãn':'Расслабляющий уход','Chăm sóc da chuyên sâu':'Глубокий уход за кожей','Nặn mụn chuẩn y khoa':'Медицинская чистка от прыщей','Cấy tảo':'Сывороточная терапия с водорослями','Phun nốt ruồi phong thuỷ':'Татуаж родинки Фэн-шуй','Đốt nốt ruồi':'Удаление родинок','Tắm dưỡng body':'Ванна для тела','Làm hồng nhũ hoa':'Осветление сосков','Khử thâm bikini':'Осветление зоны бикини','Nách':'Подмышки','Mép':'Над губой','1/2 tay':'Полрукава','Cả tay':'Вся рука','1/2 chân':'Полноги','Cả chân':'Вся нога','Bikini':'Бикини','Bụng - Ngực':'Живот и грудь','Toàn thân':'Всё тело'},
+    desc:{},comboDesc:{}
+  }
+};
+['th','ms','ru'].forEach(l=>{ T[l].desc=T.vi.desc; T[l].comboDesc=T.vi.comboDesc; });
+
+// ── STATE ──
+let lang='vi', cat=menuData.categories[0].id;
+
+// ── HELPERS ──
+const t  = k    => T[lang][k]           || T.vi[k]          || k;
+const ti = n    => (T[lang].items||{})[n]   || n;
+const td = n    => (T[lang].desc||T.vi.desc||{})[n]         || '';
+const tc = n    => (T[lang].comboDesc||T.vi.comboDesc||{})[n] || '';
+const tc2= id   => (T[lang].cats||{})[id]   || id;
+const fm = d    => d ? `${d} ${t('min')}` : '';
+
+// ── RENDER TABS ──
+function renderTabs() {
+  document.getElementById('catTabs').innerHTML = menuData.categories.map(c=>
+    `<div class="cat-tab ${c.id===cat?'active':''}" onclick="selectCat('${c.id}')">${c.icon} ${tc2(c.id)}</div>`
+  ).join('');
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  document.getElementById('hdr-title').textContent = t('title');
+  document.getElementById('content').innerHTML = menuData.categories.map(c => {
+    let h = `<div class="category-section ${c.id===cat?'active':''}" id="sec-${c.id}">`;
+    h += `<div class="sec-hdr"><div class="sec-title">${c.icon} ${tc2(c.id)}</div>`;
+    if (c.noteVi) h += `<div class="sec-note">${t('noteMale')}</div>`;
+    h += `</div>`;
+
+    // Combos
+    if (c.combos) c.combos.forEach(cb => {
+      h += `<div class="combo-item">
+        <div class="combo-hdr">
+          <span class="combo-name">${cb.nameVi}</span>
+          <div class="combo-meta">
+            <span class="combo-dur">${fm(cb.duration)}</span>
+            <span class="combo-price">${cb.amount}</span>
+          </div>
+        </div>
+        <div class="combo-body"><div class="combo-desc">${tc(cb.nameVi)}</div></div>
+      </div>`;
+    });
+
+    // Table
+    if (c.tableRows) {
+      h += `<div class="table-wrap"><table class="menu-table">
+        <thead><tr><th>${t('position')}</th><th>${t('lt10')}</th><th>${t('lifetime')}</th></tr></thead>
+        <tbody>`;
+      c.tableRows.forEach(r => {
+        h += `<tr><td>${ti(r.posVi)}</td><td class="p-cell">${r.lt10}₫</td><td class="p-cell">${r.lifetime}₫</td></tr>`;
+      });
+      h += `</tbody></table></div>`;
+    }
+
+    // Skin items
+    if (c.skinItems) c.skinItems.forEach(s => {
+      h += `<div class="skin-item"><span class="skin-name">${ti(s.nameVi)}</span><span class="skin-price">${s.amount}</span></div>`;
+    });
+
+    // Regular items
+    if (c.items) {
+      h += `<div class="menu-items">`;
+      c.items.forEach(item => {
+        const desc = td(item.nameVi);
+        h += `<div class="menu-item">
+          <div class="item-top">
+            <div class="item-name">${ti(item.nameVi)}</div>
+            <div class="item-prices">
+              ${item.prices.map(p=>`<div class="price-row">
+                ${p.duration?`<span class="price-dur">${fm(p.duration)}</span>`:''}
+                <span class="price-amt">${p.amount}</span>
+              </div>`).join('')}
+            </div>
+          </div>
+          ${desc?`<div class="item-desc">${desc}</div>`:''}
+        </div>`;
+      });
+      h += `</div>`;
+    }
+
+    // Promo
+    if (c.promo) {
+      h += `<div class="promo-box">
+        <div class="promo-title">✦ ${t('promoTitle')} ✦</div>
+        <div class="promo-deals">${t('promoDeals').map(d=>`<div class="promo-deal">${d}</div>`).join('')}</div>
+      </div>`;
+    }
+
+    h += `</div>`;
+    return h;
+  }).join('');
+}
+
+function selectCat(id) {
+  cat = id;
+  renderTabs();
+  document.querySelectorAll('.category-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id)?.classList.add('active');
+  document.querySelector('.cat-tab.active')?.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===l));
+  renderTabs();
+  renderAll();
+  selectCat(cat);
+}
+
+renderTabs();
+renderAll();
+</script>
+</body>
+</html>
