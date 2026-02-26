@@ -7,40 +7,40 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=Noto+Sans:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
 <script src="db.js"></script>
 <style>
-:root {
-  --bg:#FAF6F0; --bg2:#F0E8D8; --gold:#96621A; --gold-mid:#B87D2E; --gold-light:#E8D5A3;
-  --brown:#3E2310; --brown2:#5C3A1A; --text:#2C1A0A; --text2:#5A3D20; --text3:#6B4A28;
-  --border:#CEB992; --card:#FFFFFF; --card2:#FDF9F2; --shadow:rgba(80,40,5,0.10);
-  --green:#1A7A3A; --red:#C0392B;
+:root{
+  --bg:#FAF6F0;--bg2:#F0E8D8;--gold:#96621A;--gold-mid:#B87D2E;--gold-light:#E8D5A3;
+  --brown:#3E2310;--brown2:#5C3A1A;--text:#2C1A0A;--text2:#5A3D20;--text3:#6B4A28;
+  --border:#CEB992;--card:#FFFFFF;--card2:#FDF9F2;--shadow:rgba(80,40,5,0.10);
+  --green:#1A7A3A;--red:#C0392B;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
 
-/* NAV BAR */
-.nav-bar{display:flex;justify-content:space-between;align-items:center;background:var(--brown);padding:8px 14px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.nav-links{display:flex;gap:4px;}
-.nav-link{color:rgba(255,255,255,0.7);font-size:11px;padding:5px 10px;border-radius:14px;text-decoration:none;border:1px solid transparent;transition:all 0.2s;}
-.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.2);}
+/* NAV */
+.nav-bar{display:flex;justify-content:space-between;align-items:center;background:var(--brown);padding:9px 14px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
 .nav-logo{font-family:'Playfair Display',serif;font-size:16px;color:#E8C878;font-weight:700;}
+.nav-links{display:flex;gap:4px;}
+.nav-link{color:rgba(255,255,255,0.65);font-size:11px;padding:5px 10px;border-radius:14px;text-decoration:none;border:1px solid transparent;transition:all 0.2s;}
+.nav-link:hover,.nav-link.active{background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.2);}
 
 /* LANG BAR */
-.lang-bar{background:var(--brown2);padding:7px 12px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;}
+.lang-bar{background:var(--brown2);padding:7px 12px;display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
 .lang-bar::-webkit-scrollbar{display:none;}
 .lang-btn{flex-shrink:0;padding:5px 11px;border-radius:15px;border:1.5px solid rgba(255,255,255,0.25);background:transparent;color:#EDD9B0;font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .lang-btn.active{background:var(--gold-mid);border-color:var(--gold-mid);color:#fff;font-weight:700;}
 
 /* HEADER */
-.header{background:linear-gradient(160deg,#2E1508 0%,#5C3010 100%);padding:20px 20px 26px;text-align:center;position:relative;}
-.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:16px;background:var(--bg);border-radius:16px 16px 0 0;}
+.header{background:linear-gradient(160deg,#2E1508 0%,#5C3010 100%);padding:20px 20px 28px;text-align:center;position:relative;overflow:hidden;}
+.header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:var(--bg);border-radius:18px 18px 0 0;}
 .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
-.logo-icon{width:38px;height:38px;background:var(--gold-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+.logo-icon{width:38px;height:38px;background:var(--gold-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
 .logo-name{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:#fff;}
 .logo-name span{color:#E8C878;}
 .logo-tag{font-size:11px;color:rgba(255,255,255,0.6);font-style:italic;margin-bottom:10px;}
-.hdr-title{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,5vw,26px);color:#EDD9A0;}
+.hdr-title{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(18px,5vw,26px);color:#EDD9A0;line-height:1.3;}
 
-/* CAT TABS */
-.cat-tabs{position:sticky;top:78px;z-index:90;background:var(--bg);display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid var(--border);box-shadow:0 2px 5px var(--shadow);}
+/* CATEGORY TABS */
+.cat-tabs{position:sticky;top:79px;z-index:90;background:var(--bg);display:flex;overflow-x:auto;scrollbar-width:none;border-bottom:2px solid var(--border);box-shadow:0 2px 5px var(--shadow);}
 .cat-tabs::-webkit-scrollbar{display:none;}
 .cat-tab{flex-shrink:0;padding:10px 14px;font-size:12px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:3px solid transparent;transition:all 0.2s;white-space:nowrap;}
 .cat-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
@@ -51,85 +51,89 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
 .cat-section.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
+/* SECTION HEADER */
 .sec-hdr{background:linear-gradient(135deg,var(--brown2),#8B5020);padding:14px 20px;text-align:center;margin-bottom:12px;}
 .sec-title{font-family:'Playfair Display',serif;font-size:clamp(16px,4vw,20px);color:#fff;font-weight:700;}
-.sec-note{margin-top:3px;font-size:11px;color:rgba(255,255,255,0.8);}
+.sec-note{margin-top:3px;font-size:11px;color:rgba(255,255,255,0.82);}
 
-/* MENU ITEM */
+/* MENU ITEMS — standard */
 .menu-items{padding:0 12px;}
 .menu-item{background:var(--card);border:1.5px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:9px;box-shadow:0 2px 6px var(--shadow);cursor:pointer;transition:all 0.2s;position:relative;}
 .menu-item:active{transform:scale(0.99);background:var(--card2);}
-.menu-item::after{content:'▶';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--gold-mid);opacity:0.6;}
-.item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px;padding-right:16px;}
-.item-name-wrap .item-name{font-size:14px;font-weight:700;color:var(--brown);line-height:1.3;}
-.item-name-wrap .item-name-vi{font-size:11px;color:var(--text3);margin-top:1px;font-style:italic;}
+.menu-item::after{content:'▶';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--gold-mid);opacity:0.5;}
+.item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding-right:16px;}
+.item-name{font-size:14px;font-weight:700;color:var(--brown);line-height:1.35;}
+.item-name-vi{font-size:11px;color:var(--text3);margin-top:2px;font-style:italic;}
 .item-prices{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
 .price-row{display:flex;align-items:center;gap:5px;}
-.price-dur{font-size:10px;font-weight:600;color:var(--text3);background:var(--bg2);border:1px solid var(--border);padding:1px 6px;border-radius:9px;}
+.price-dur{font-size:10px;font-weight:600;color:var(--text3);background:var(--bg2);border:1px solid var(--border);padding:2px 6px;border-radius:9px;}
 .price-amt{font-size:15px;font-weight:800;color:var(--gold);}
-.item-desc{font-size:11.5px;color:var(--text3);line-height:1.5;border-top:1px solid var(--bg2);padding-top:5px;margin-top:3px;}
-.item-desc-vi{font-size:10.5px;color:var(--text3);opacity:0.7;margin-top:2px;font-style:italic;}
+.item-desc{font-size:11.5px;color:var(--text3);line-height:1.55;border-top:1px solid var(--bg2);padding-top:6px;margin-top:5px;}
 
-/* SKIN/TABLE ITEMS */
-.skin-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin:0 12px 7px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;box-shadow:0 1px 5px var(--shadow);transition:all 0.2s;}
+/* SKIN CARE — simple list */
+.skin-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;margin:0 12px 8px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;box-shadow:0 1px 5px var(--shadow);transition:all 0.2s;position:relative;}
 .skin-item:active{transform:scale(0.99);}
-.skin-name{font-size:13.5px;font-weight:700;color:var(--brown);flex:1;}
-.skin-name-vi{font-size:10px;color:var(--text3);font-style:italic;}
+.skin-item::after{content:'▶';position:absolute;right:12px;font-size:10px;color:var(--gold-mid);opacity:0.5;}
+.skin-name{font-size:13.5px;font-weight:700;color:var(--brown);flex:1;padding-right:14px;}
+.skin-name-vi{font-size:10.5px;color:var(--text3);font-style:italic;margin-top:2px;}
 .skin-price{font-size:14px;font-weight:800;color:var(--gold);white-space:nowrap;}
+
+/* HAIR REMOVAL — table */
 .table-wrap{padding:0 12px 8px;overflow-x:auto;}
 .menu-table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden;box-shadow:0 2px 7px var(--shadow);}
 .menu-table thead tr{background:var(--brown2);}
 .menu-table th{padding:10px 8px;font-size:12px;font-weight:700;color:#fff;text-align:center;}
-.menu-table th:first-child{text-align:left;}
-.menu-table td{padding:9px 8px;font-size:13px;font-weight:500;color:var(--text);text-align:center;border-bottom:1px solid var(--bg2);background:var(--card);}
-.menu-table td:first-child{text-align:left;color:var(--brown);font-weight:700;background:var(--card2);}
+.menu-table th:first-child{text-align:left;padding-left:12px;}
+.menu-table td{padding:9px 8px;font-size:13px;font-weight:500;color:var(--text);text-align:center;border-bottom:1px solid var(--bg2);background:var(--card);cursor:pointer;}
+.menu-table td:first-child{text-align:left;color:var(--brown);font-weight:700;background:var(--card2);padding-left:12px;}
 .menu-table tr:nth-child(even) td{background:var(--bg2);}
 .menu-table tr:nth-child(even) td:first-child{background:#EDE0C8;}
 .menu-table td.p-cell{color:var(--gold);font-weight:800;}
+.menu-table tbody tr:hover td{background:#F5EDD8;}
+.name-vi-small{font-size:10px;color:var(--text3);font-style:italic;display:block;margin-top:1px;font-weight:400;}
 
-/* PROMO */
+/* PROMO BOX */
 .promo-box{margin:8px 12px 4px;background:linear-gradient(135deg,#3E2310,#7A3C10);border-radius:12px;padding:14px;text-align:center;box-shadow:0 4px 12px rgba(60,20,0,0.2);}
 .promo-title{font-size:12px;font-weight:700;color:#EDD9A0;letter-spacing:1px;margin-bottom:10px;}
 .promo-deals{display:flex;gap:8px;justify-content:center;}
 .promo-deal{background:var(--gold-mid);color:#fff;border-radius:9px;padding:8px 18px;font-weight:800;font-size:13.5px;}
 
-/* MODAL - Session Start */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+/* EMPTY STATE */
+.empty-cats{text-align:center;padding:60px 20px;color:var(--text3);}
+.empty-cats .ico{font-size:48px;margin-bottom:12px;}
+.empty-cats p{font-size:14px;line-height:1.6;}
+
+/* SESSION MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:500;display:none;align-items:flex-end;justify-content:center;}
 .modal-overlay.show{display:flex;}
-.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;animation:slideUp 0.3s ease;}
+.modal-sheet{background:#fff;border-radius:22px 22px 0 0;padding:22px 18px 30px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:slideUp 0.28s ease;}
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px;}
-.modal-subtitle{font-size:12px;color:var(--text3);margin-bottom:16px;}
-.modal-menu-info{background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;}
-.modal-menu-name{font-size:14px;font-weight:700;color:var(--brown);}
-.modal-menu-vi{font-size:11px;color:var(--text3);font-style:italic;margin-bottom:6px;}
-.price-select-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;}
-.price-opt{padding:6px 14px;border-radius:18px;border:2px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
-.price-opt.selected{background:var(--gold);border-color:var(--gold);color:#fff;}
-
-.field-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;margin-top:10px;}
-.field-select,.field-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);appearance:none;}
-.field-select:focus,.field-input:focus{outline:none;border-color:var(--gold);}
-
-.therapist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
-.therapist-btn{padding:10px 8px;border-radius:9px;border:2px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;}
-.therapist-btn.selected{background:var(--green);border-color:var(--green);color:#fff;}
-.therapist-btn.busy{opacity:0.45;cursor:not-allowed;}
-
-.btn-start{width:100%;padding:14px;border-radius:12px;background:var(--green);color:#fff;font-size:16px;font-weight:700;border:none;cursor:pointer;margin-top:14px;transition:all 0.2s;}
-.btn-start:disabled{background:#ccc;cursor:not-allowed;}
-.btn-cancel{width:100%;padding:11px;border-radius:12px;background:transparent;color:var(--text3);font-size:14px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;margin-top:8px;}
-
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--brown);display:flex;justify-content:space-around;padding:8px 0 env(safe-area-inset-bottom,8px);z-index:150;box-shadow:0 -2px 10px rgba(0,0,0,0.3);}
-.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:10px;padding:4px 16px;border-radius:8px;transition:color 0.2s;cursor:pointer;}
-.bn-item.active,.bn-item:hover{color:#E8C878;}
-.bn-icon{font-size:20px;}
+.modal-drag{width:40px;height:4px;background:#ddd;border-radius:4px;margin:0 auto 16px;}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:3px;}
+.modal-sub{font-size:12px;color:var(--text3);margin-bottom:14px;}
+.info-box{background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px;}
+.info-menu-name{font-size:14.5px;font-weight:700;color:var(--brown);}
+.info-menu-vi{font-size:11px;color:var(--text3);font-style:italic;margin-bottom:8px;}
+.price-opts{display:flex;gap:8px;flex-wrap:wrap;}
+.price-opt{padding:7px 14px;border-radius:18px;border:2px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.price-opt.selected,.price-opt:hover{background:var(--gold);border-color:var(--gold);color:#fff;}
+.field-lbl{font-size:12px;font-weight:700;color:var(--text2);margin:12px 0 5px;}
+.field-sel{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);-webkit-appearance:none;appearance:none;}
+.field-sel:focus,.field-txt:focus{outline:none;border-color:var(--gold);}
+.field-txt{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:14px;font-family:inherit;background:var(--card);color:var(--text);}
+.therapist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.thr-btn{padding:10px 6px;border-radius:9px;border:2px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:all 0.15s;line-height:1.3;}
+.thr-btn.selected{background:var(--green);border-color:var(--green);color:#fff;}
+.thr-btn.busy{opacity:0.4;cursor:not-allowed;background:#eee;}
+.btn-start{width:100%;padding:15px;border-radius:12px;background:var(--green);color:#fff;font-size:16px;font-weight:700;border:none;cursor:pointer;margin-top:14px;transition:all 0.2s;box-shadow:0 4px 12px rgba(26,122,58,0.3);}
+.btn-start:disabled{background:#ccc;cursor:not-allowed;box-shadow:none;}
+.btn-start:not(:disabled):active{transform:scale(0.98);}
+.btn-dismiss{width:100%;padding:11px;border-radius:12px;background:transparent;color:var(--text3);font-size:14px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;margin-top:8px;}
 </style>
 </head>
 <body>
 
-<!-- Nav Bar -->
+<!-- Navigation -->
 <div class="nav-bar">
   <div class="nav-logo">🌿 Lavie Spa</div>
   <div class="nav-links">
@@ -139,8 +143,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
   </div>
 </div>
 
-<!-- Lang Bar -->
-<div class="lang-bar" id="langBar">
+<!-- Language Bar -->
+<div class="lang-bar">
   <button class="lang-btn active" onclick="setLang('vi')" data-lang="vi">🇻🇳 Việt</button>
   <button class="lang-btn" onclick="setLang('ko')" data-lang="ko">🇰🇷 한국어</button>
   <button class="lang-btn" onclick="setLang('en')" data-lang="en">🇬🇧 English</button>
@@ -161,270 +165,365 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
   <div class="hdr-title" id="hdrTitle">Bảng Giá Dịch Vụ</div>
 </div>
 
-<!-- Cat Tabs -->
+<!-- Category Tabs -->
 <div class="cat-tabs" id="catTabs"></div>
+
 <!-- Content -->
 <div class="content" id="content"></div>
 
-<!-- Session Modal -->
-<div class="modal-overlay" id="sessionModal">
-  <div class="modal-box">
+<!-- Session Start Modal -->
+<div class="modal-overlay" id="sessionModal" onclick="onOverlayClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-drag"></div>
     <div class="modal-title">🌿 Bắt đầu dịch vụ</div>
-    <div class="modal-subtitle">Chọn giá, giường và kỹ thuật viên</div>
-    <div class="modal-menu-info">
-      <div class="modal-menu-name" id="mMenuName"></div>
-      <div class="modal-menu-vi" id="mMenuVi"></div>
-      <div class="price-select-row" id="mPrices"></div>
+    <div class="modal-sub">Chọn mức giá, giường và kỹ thuật viên</div>
+
+    <div class="info-box">
+      <div class="info-menu-name" id="mMenuName"></div>
+      <div class="info-menu-vi"   id="mMenuVi"></div>
+      <div class="price-opts"     id="mPriceOpts"></div>
     </div>
-    <div class="field-label">🛏 Chọn giường</div>
-    <select class="field-select" id="mBed"></select>
-    <div class="field-label">👤 Chọn kỹ thuật viên</div>
-    <div class="therapist-grid" id="mTherapists"></div>
-    <div class="field-label">📝 Ghi chú (không bắt buộc)</div>
-    <input class="field-input" id="mNote" type="text" placeholder="VD: khách VIP, yêu cầu đặc biệt...">
-    <button class="btn-start" id="mStart" onclick="startSession()">▶ Bắt đầu ngay</button>
-    <button class="btn-cancel" onclick="closeModal()">✕ Đóng</button>
+
+    <div class="field-lbl">🛏 Giường</div>
+    <select class="field-sel" id="mBedSel"></select>
+
+    <div class="field-lbl">👤 Kỹ thuật viên</div>
+    <div class="therapist-grid" id="mThrGrid"></div>
+
+    <div class="field-lbl">📝 Ghi chú (tuỳ chọn)</div>
+    <input class="field-txt" id="mNote" type="text" placeholder="VD: khách VIP, yêu cầu đặc biệt...">
+
+    <button class="btn-start" id="mBtnStart" disabled onclick="doStartSession()">▶ Bắt đầu ngay</button>
+    <button class="btn-dismiss" onclick="closeModal()">✕ Đóng</button>
   </div>
 </div>
 
 <script>
 // ── STATE ──
-let db, lang = 'vi', currentCat = null;
-let selectedMenu = null, selectedPrice = null, selectedTherapist = null;
+var appDB;
+var appLang = 'vi';
+var currentCat = null;
+var selMenuId = null;
+var selPriceIdx = null;
+var selThrId = null;
 
-const TITLES = {
-  vi:'Bảng Giá Dịch Vụ', ko:'서비스 가격표', en:'Service Price List',
-  ja:'サービス料金表', zh:'服务价目表', th:'รายการราคา', ms:'Senarai Harga', ru:'Прайс-лист'
+var TITLES = {
+  vi:'Bảng Giá Dịch Vụ',ko:'서비스 가격표',en:'Service Price List',
+  ja:'サービス料金表',zh:'服务价目表',th:'รายการราคาบริการ',ms:'Senarai Harga',ru:'Прайс-лист'
 };
-const MIN_LABELS = { vi:'phút', ko:'분', en:'min', ja:'分', zh:'分钟', th:'นาที', ms:'minit', ru:'мин' };
-const NOTE_MALE = {
-  vi:'★ Khách nam phụ thu thêm 50k/người', ko:'★ 남성 고객 50k 추가',
-  en:'★ Male guests: +50k surcharge', ja:'★ 男性お客様 +50k',
-  zh:'★ 男性顾客额外50k', th:'★ ลูกค้าชาย +50k', ms:'★ Pelanggan lelaki +50k', ru:'★ Мужчины +50k'
+var MIN_LABEL = {vi:'phút',ko:'분',en:'min',ja:'分',zh:'分钟',th:'นาที',ms:'minit',ru:'мин'};
+var NOTE_MALE = {
+  vi:'★ Khách nam phụ thu thêm 50k/người',ko:'★ 남성 고객 50k 추가',
+  en:'★ Male guests: +50k surcharge',ja:'★ 男性のお客様 +50k',
+  zh:'★ 男性顾客额外50k',th:'★ ลูกค้าชาย +50k',ms:'★ Pelanggan lelaki +50k',ru:'★ Мужчины +50k'
 };
 
+// ── INIT ──
 function init() {
-  db = DB.loadDB();
-  currentCat = db.categories[0]?.id;
+  appDB = DB.loadDB();
+  currentCat = (appDB.categories && appDB.categories.length > 0) ? appDB.categories[0].id : null;
+  renderAll();
+}
+
+// ── HELPERS ──
+function tName(item) {
+  if (!item) return '';
+  if (appLang === 'vi') return item.nameVi || '';
+  return (item.translations && item.translations[appLang]) || item.nameVi || '';
+}
+function tDesc(item) {
+  if (!item) return '';
+  if (appLang === 'vi') return item.descVi || '';
+  return (item.translations && item.translations[appLang + '_desc']) || item.descVi || '';
+}
+function fmtMin(d) {
+  if (!d) return '';
+  return d + ' ' + (MIN_LABEL[appLang] || 'min');
+}
+function showViLabel(item) {
+  // show Vietnamese label only when in non-vi language
+  return appLang !== 'vi' && item.nameVi;
+}
+
+// ── RENDER ALL ──
+function renderAll() {
+  document.getElementById('hdrTitle').textContent = TITLES[appLang] || TITLES.vi;
   renderTabs();
   renderContent();
 }
 
-function tName(item) {
-  if (lang === 'vi') return item.nameVi;
-  return item.translations?.[lang] || item.nameVi;
-}
-function tDesc(item) {
-  if (lang === 'vi') return item.descVi || '';
-  return item.translations?.[lang + '_desc'] || item.descVi || '';
-}
-function fmtMin(d) { return d ? `${d} ${MIN_LABELS[lang]||'min'}` : ''; }
-
-// ── RENDER ──
 function renderTabs() {
-  document.getElementById('hdrTitle').textContent = TITLES[lang] || TITLES.vi;
-  document.getElementById('catTabs').innerHTML = db.categories.map(c =>
-    `<div class="cat-tab ${c.id===currentCat?'active':''}" onclick="selectCat('${c.id}')">${c.icon} ${tName(c)}</div>`
-  ).join('');
+  var cats = appDB.categories || [];
+  if (cats.length === 0) {
+    document.getElementById('catTabs').innerHTML = '';
+    return;
+  }
+  document.getElementById('catTabs').innerHTML = cats.map(function(c) {
+    return '<div class="cat-tab ' + (c.id === currentCat ? 'active' : '') + '" onclick="selectCat(\'' + c.id + '\')">' +
+      (c.icon || '') + ' ' + tName(c) + '</div>';
+  }).join('');
 }
 
 function renderContent() {
-  const menus = db.menus.filter(m => m.active);
-  document.getElementById('content').innerHTML = db.categories.map(cat => {
-    const catMenus = menus.filter(m => m.catId === cat.id);
-    let h = `<div class="cat-section ${cat.id===currentCat?'active':''}" id="sec-${cat.id}">`;
-    h += `<div class="sec-hdr"><div class="sec-title">${cat.icon} ${tName(cat)}</div>`;
-    const hasNote = catMenus.some(m => m.maleExtra);
-    if (hasNote) h += `<div class="sec-note">${NOTE_MALE[lang]||NOTE_MALE.vi}</div>`;
-    h += `</div>`;
+  var cats = appDB.categories || [];
+  var allMenus = appDB.menus || [];
 
-    // Check if hair removal (table style)
-    const isHairRemoval = catMenus.length > 0 && catMenus[0].prices?.some(p => p.label);
-    if (isHairRemoval) {
-      h += `<div class="table-wrap"><table class="menu-table"><thead><tr>
-        <th>Vị trí</th><th>LT (10 buổi)</th><th>Trọn đời</th></tr></thead><tbody>`;
-      catMenus.forEach(m => {
-        const p0 = m.prices[0], p1 = m.prices[1];
-        h += `<tr onclick="openModal('${m.id}')">
-          <td>${tName(m)}<br><small style="font-style:italic;color:#888;font-weight:400">${m.nameVi}</small></td>
-          <td class="p-cell">${DB.fmtMoney(p0?.amount)}</td>
-          <td class="p-cell">${DB.fmtMoney(p1?.amount)}</td>
-        </tr>`;
-      });
-      h += `</tbody></table></div>`;
-    }
-    // Skin care (simple list, no duration)
-    else if (catMenus.length > 0 && !catMenus[0].prices?.some(p => p.duration)) {
-      catMenus.forEach(m => {
-        const priceStr = m.prices.map(p => DB.fmtMoney(p.amount)).join(' - ');
-        const translatedName = tName(m);
-        const showVi = lang !== 'vi';
-        h += `<div class="skin-item" onclick="openModal('${m.id}')">
-          <div><div class="skin-name">${translatedName}</div>${showVi?`<div class="skin-name-vi">${m.nameVi}</div>`:''}</div>
-          <div class="skin-price">${priceStr}</div>
-        </div>`;
-      });
-    }
-    // Standard items with duration
-    else {
-      h += `<div class="menu-items">`;
-      catMenus.forEach(m => {
-        const translatedName = tName(m);
-        const translatedDesc = tDesc(m);
-        const showVi = lang !== 'vi';
-        const hasPromo = m.promo;
-        h += `<div class="menu-item" onclick="openModal('${m.id}')">
-          <div class="item-top">
-            <div class="item-name-wrap">
-              <div class="item-name">${translatedName}</div>
-              ${showVi ? `<div class="item-name-vi">${m.nameVi}</div>` : ''}
-            </div>
-            <div class="item-prices">
-              ${m.prices.map(p=>`<div class="price-row">
-                ${p.duration?`<span class="price-dur">${fmtMin(p.duration)}</span>`:''}
-                <span class="price-amt">${DB.fmtMoney(p.amount)}</span>
-              </div>`).join('')}
-            </div>
-          </div>
-          ${translatedDesc?`<div class="item-desc">${translatedDesc}</div>`:''}
-          ${(showVi && translatedDesc && m.descVi && translatedDesc !== m.descVi)?`<div class="item-desc-vi">${m.descVi}</div>`:''}
-        </div>`;
-      });
-      h += `</div>`;
-      if (catMenus.some(m => m.promo)) {
-        h += `<div class="promo-box">
-          <div class="promo-title">✦ Khi mua liệu trình ✦</div>
-          <div class="promo-deals"><div class="promo-deal">Mua 5 tặng 1</div><div class="promo-deal">Mua 10 tặng 2</div></div>
-        </div>`;
+  if (cats.length === 0) {
+    document.getElementById('content').innerHTML =
+      '<div class="empty-cats"><div class="ico">📋</div><p>Chưa có danh mục nào.<br>Vào <a href="settings.html">Cài đặt</a> để thêm menu.</p></div>';
+    return;
+  }
+
+  var html = cats.map(function(cat) {
+    var catMenus = allMenus.filter(function(m) { return m.catId === cat.id && m.active; });
+    var isActive = cat.id === currentCat;
+    var sectionHtml = '<div class="cat-section ' + (isActive ? 'active' : '') + '" id="sec-' + cat.id + '">';
+
+    // Section header
+    sectionHtml += '<div class="sec-hdr"><div class="sec-title">' + (cat.icon || '') + ' ' + tName(cat) + '</div>';
+    var hasMaleExtra = catMenus.some(function(m) { return m.maleExtra; });
+    if (hasMaleExtra) sectionHtml += '<div class="sec-note">' + (NOTE_MALE[appLang] || NOTE_MALE.vi) + '</div>';
+    sectionHtml += '</div>';
+
+    if (catMenus.length === 0) {
+      sectionHtml += '<div style="text-align:center;padding:30px;color:var(--text3);font-size:13px;">Chưa có dịch vụ nào trong danh mục này.</div>';
+    } else {
+      // Detect type: hair removal = has label in prices
+      var isHairRemoval = catMenus[0].prices && catMenus[0].prices[0] && catMenus[0].prices[0].label;
+      // Detect type: skin care = prices with no duration
+      var isSkinCare = !isHairRemoval && catMenus[0].prices && catMenus[0].prices[0] && !catMenus[0].prices[0].duration;
+
+      if (isHairRemoval) {
+        sectionHtml += '<div class="table-wrap"><table class="menu-table"><thead><tr>' +
+          '<th>Vị trí</th><th>LT (10 buổi)</th><th>Trọn đời</th>' +
+          '</tr></thead><tbody>';
+        catMenus.forEach(function(m) {
+          var displayName = tName(m);
+          var p0 = m.prices[0] || {};
+          var p1 = m.prices[1] || {};
+          sectionHtml += '<tr onclick="openModal(\'' + m.id + '\')">' +
+            '<td>' + displayName +
+            (showViLabel(m) ? '<span class="name-vi-small">' + m.nameVi + '</span>' : '') +
+            '</td>' +
+            '<td class="p-cell">' + DB.fmtMoney(p0.amount) + '</td>' +
+            '<td class="p-cell">' + DB.fmtMoney(p1.amount) + '</td>' +
+            '</tr>';
+        });
+        sectionHtml += '</tbody></table></div>';
+
+      } else if (isSkinCare) {
+        catMenus.forEach(function(m) {
+          var displayName = tName(m);
+          var priceStr = m.prices.map(function(p) { return DB.fmtMoney(p.amount); }).filter(Boolean).join(' - ');
+          sectionHtml += '<div class="skin-item" onclick="openModal(\'' + m.id + '\')">' +
+            '<div><div class="skin-name">' + displayName + '</div>' +
+            (showViLabel(m) ? '<div class="skin-name-vi">' + m.nameVi + '</div>' : '') + '</div>' +
+            '<div class="skin-price">' + priceStr + '</div>' +
+            '</div>';
+        });
+
+      } else {
+        // Standard items
+        sectionHtml += '<div class="menu-items">';
+        var hasPromo = false;
+        catMenus.forEach(function(m) {
+          if (m.promo) hasPromo = true;
+          var displayName = tName(m);
+          var displayDesc = tDesc(m);
+          var pricesHtml = m.prices.map(function(p) {
+            var durHtml = p.duration ? '<span class="price-dur">' + fmtMin(p.duration) + '</span>' : '';
+            return '<div class="price-row">' + durHtml + '<span class="price-amt">' + DB.fmtMoney(p.amount) + '</span></div>';
+          }).join('');
+          sectionHtml += '<div class="menu-item" onclick="openModal(\'' + m.id + '\')">' +
+            '<div class="item-top">' +
+            '<div><div class="item-name">' + displayName + '</div>' +
+            (showViLabel(m) ? '<div class="item-name-vi">' + m.nameVi + '</div>' : '') + '</div>' +
+            '<div class="item-prices">' + pricesHtml + '</div>' +
+            '</div>' +
+            (displayDesc ? '<div class="item-desc">' + displayDesc + '</div>' : '') +
+            '</div>';
+        });
+        sectionHtml += '</div>';
+        if (hasPromo) {
+          sectionHtml += '<div class="promo-box">' +
+            '<div class="promo-title">✦ Khi mua liệu trình ✦</div>' +
+            '<div class="promo-deals"><div class="promo-deal">Mua 5 tặng 1</div><div class="promo-deal">Mua 10 tặng 2</div></div>' +
+            '</div>';
+        }
       }
     }
-    h += `</div>`;
-    return h;
+    sectionHtml += '</div>';
+    return sectionHtml;
   }).join('');
+
+  document.getElementById('content').innerHTML = html;
 }
 
 function selectCat(id) {
   currentCat = id;
-  renderTabs();
-  document.querySelectorAll('.cat-section').forEach(s => s.classList.remove('active'));
-  document.getElementById('sec-' + id)?.classList.add('active');
-  document.querySelector('.cat-tab.active')?.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  // update tabs
+  var tabs = document.querySelectorAll('.cat-tab');
+  tabs.forEach(function(t) { t.classList.remove('active'); });
+  tabs.forEach(function(t) {
+    if (t.getAttribute('onclick') === "selectCat('" + id + "')") t.classList.add('active');
+  });
+  // update sections
+  var sections = document.querySelectorAll('.cat-section');
+  sections.forEach(function(s) { s.classList.remove('active'); });
+  var active = document.getElementById('sec-' + id);
+  if (active) active.classList.add('active');
+  // scroll tab into view
+  document.querySelector('.cat-tab.active') &&
+    document.querySelector('.cat-tab.active').scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 }
 
 function setLang(l) {
-  lang = l;
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
-  renderTabs();
-  renderContent();
+  appLang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-lang') === l);
+  });
+  renderAll();
   selectCat(currentCat);
 }
 
 // ── MODAL ──
 function openModal(menuId) {
-  selectedMenu = db.menus.find(m => m.id === menuId);
-  if (!selectedMenu) return;
-  selectedPrice = null; selectedTherapist = null;
+  appDB = DB.loadDB(); // refresh
+  var menu = null;
+  for (var i = 0; i < appDB.menus.length; i++) {
+    if (appDB.menus[i].id === menuId) { menu = appDB.menus[i]; break; }
+  }
+  if (!menu) return;
 
-  const translatedName = tName(selectedMenu);
-  document.getElementById('mMenuName').textContent = translatedName;
-  document.getElementById('mMenuVi').textContent = lang !== 'vi' ? selectedMenu.nameVi : '';
+  selMenuId = menuId;
+  selPriceIdx = null;
+  selThrId = null;
 
-  // Prices
-  const pricesEl = document.getElementById('mPrices');
-  pricesEl.innerHTML = selectedMenu.prices.map((p, i) => {
-    const label = p.label ? p.label : (p.duration ? fmtMin(p.duration) + ' - ' : '') + DB.fmtMoney(p.amount);
-    return `<div class="price-opt" onclick="selectPrice(${i})" id="popt${i}">${label}</div>`;
+  // Menu info
+  var displayName = tName(menu);
+  document.getElementById('mMenuName').textContent = displayName;
+  document.getElementById('mMenuVi').textContent = (appLang !== 'vi' && menu.nameVi) ? menu.nameVi : '';
+
+  // Price options
+  var priceHtml = menu.prices.map(function(p, i) {
+    var label = p.label ? p.label : (p.duration ? fmtMin(p.duration) + '  ' : '');
+    label += DB.fmtMoney(p.amount);
+    return '<div class="price-opt" data-idx="' + i + '" onclick="selPrice(' + i + ')">' + label + '</div>';
   }).join('');
-  if (selectedMenu.prices.length === 1) {
-    selectedPrice = 0;
-    document.getElementById('popt0')?.classList.add('selected');
+  document.getElementById('mPriceOpts').innerHTML = priceHtml;
+  // Auto-select if only one price
+  if (menu.prices.length === 1) {
+    selPriceIdx = 0;
+    var firstOpt = document.querySelector('#mPriceOpts .price-opt');
+    if (firstOpt) firstOpt.classList.add('selected');
   }
 
   // Beds
-  const activeSessions = (db.sessions||[]).filter(s => s.status === 'active');
-  const busyBeds = activeSessions.map(s => s.bedId);
-  const bedEl = document.getElementById('mBed');
-  bedEl.innerHTML = '<option value="">-- Chọn giường --</option>' +
-    db.beds.map(b => `<option value="${b.id}" ${busyBeds.includes(b.id)?'disabled':''}>${b.name}${busyBeds.includes(b.id)?' (đang dùng)':''}</option>`).join('');
+  var activeSessions = (appDB.sessions || []).filter(function(s) { return s.status === 'active'; });
+  var busyBedIds = activeSessions.map(function(s) { return s.bedId; });
+  var bedHtml = '<option value="">-- Không chọn giường --</option>';
+  (appDB.beds || []).forEach(function(b) {
+    var busy = busyBedIds.indexOf(b.id) !== -1;
+    bedHtml += '<option value="' + b.id + '"' + (busy ? ' disabled' : '') + '>' +
+      b.name + (busy ? ' (đang dùng)' : '') + '</option>';
+  });
+  document.getElementById('mBedSel').innerHTML = bedHtml;
 
   // Therapists
-  const busyTherapists = activeSessions.map(s => s.therapistId);
-  const thrEl = document.getElementById('mTherapists');
-  thrEl.innerHTML = db.therapists.filter(t => t.active).map(t =>
-    `<div class="therapist-btn ${busyTherapists.includes(t.id)?'busy':''}" 
-      id="thr${t.id}" onclick="${busyTherapists.includes(t.id)?'':'selectTherapist(\''+t.id+'\')'}">${t.name}${busyTherapists.includes(t.id)?'<br><small>Bận</small>':''}</div>`
-  ).join('');
+  var busyThrIds = activeSessions.map(function(s) { return s.therapistId; });
+  var activeThrs = (appDB.therapists || []).filter(function(t) { return t.active !== false; });
+  var thrHtml = activeThrs.map(function(t) {
+    var busy = busyThrIds.indexOf(t.id) !== -1;
+    return '<div class="thr-btn ' + (busy ? 'busy' : '') + '" id="thr_' + t.id + '"' +
+      (busy ? '' : ' onclick="selThr(\'' + t.id + '\')"') + '>' +
+      t.name + (busy ? '<br><small style="font-size:9px">Đang bận</small>' : '') + '</div>';
+  }).join('');
+  document.getElementById('mThrGrid').innerHTML = thrHtml || '<p style="color:var(--text3);font-size:13px;grid-column:span 3">Chưa có kỹ thuật viên. <a href="settings.html">Thêm ngay</a></p>';
 
   document.getElementById('mNote').value = '';
-  document.getElementById('mStart').disabled = true;
+  document.getElementById('mBtnStart').disabled = true;
   document.getElementById('sessionModal').classList.add('show');
 }
 
-function selectPrice(idx) {
-  selectedPrice = idx;
-  document.querySelectorAll('.price-opt').forEach((el,i) => el.classList.toggle('selected', i === idx));
-  checkModalReady();
+function selPrice(idx) {
+  selPriceIdx = idx;
+  document.querySelectorAll('#mPriceOpts .price-opt').forEach(function(el, i) {
+    el.classList.toggle('selected', i === idx);
+  });
+  checkReady();
 }
 
-function selectTherapist(id) {
-  selectedTherapist = id;
-  document.querySelectorAll('.therapist-btn').forEach(el => el.classList.remove('selected'));
-  document.getElementById('thr' + id)?.classList.add('selected');
-  checkModalReady();
+function selThr(id) {
+  selThrId = id;
+  document.querySelectorAll('.thr-btn').forEach(function(el) { el.classList.remove('selected'); });
+  var el = document.getElementById('thr_' + id);
+  if (el) el.classList.add('selected');
+  checkReady();
 }
 
-function checkModalReady() {
-  document.getElementById('mStart').disabled = !(selectedPrice !== null && selectedTherapist);
+function checkReady() {
+  document.getElementById('mBtnStart').disabled = !(selPriceIdx !== null && selThrId);
 }
 
 function closeModal() {
   document.getElementById('sessionModal').classList.remove('show');
-  selectedMenu = null; selectedPrice = null; selectedTherapist = null;
+  selMenuId = null; selPriceIdx = null; selThrId = null;
 }
 
-function startSession() {
-  if (!selectedMenu || selectedPrice === null || !selectedTherapist) return;
-  db = DB.loadDB();
-  const price = selectedMenu.prices[selectedPrice];
-  const bedId = document.getElementById('mBed').value;
-  const note = document.getElementById('mNote').value.trim();
-  const now = Date.now();
-  const duration = parseInt(price.duration) || 0;
+function onOverlayClick(e) { if (e.target === document.getElementById('sessionModal')) closeModal(); }
 
-  const session = {
-    id: DB.genId('s'),
-    menuId: selectedMenu.id,
-    menuNameVi: selectedMenu.nameVi,
-    catId: selectedMenu.catId,
-    therapistId: selectedTherapist,
-    therapistName: db.therapists.find(t => t.id === selectedTherapist)?.name || '',
-    bedId: bedId || null,
-    bedName: db.beds.find(b => b.id === bedId)?.name || '',
-    priceIdx: selectedPrice,
-    amount: price.amount,
-    duration: duration,
-    startTime: now,
-    endTime: duration > 0 ? now + duration * 60000 : null,
-    note: note,
-    status: 'active',
-    lang: lang,
+function doStartSession() {
+  if (selMenuId === null || selPriceIdx === null || !selThrId) return;
+
+  appDB = DB.loadDB();
+  var menu = appDB.menus.find(function(m) { return m.id === selMenuId; });
+  if (!menu) return;
+
+  var price = menu.prices[selPriceIdx];
+  var thr   = appDB.therapists.find(function(t) { return t.id === selThrId; });
+  var bedId = document.getElementById('mBedSel').value;
+  var bed   = appDB.beds.find(function(b) { return b.id === bedId; });
+  var note  = document.getElementById('mNote').value.trim();
+  var now   = Date.now();
+  var dur   = parseInt(price.duration) || 0;
+  var cat   = appDB.categories.find(function(c) { return c.id === menu.catId; });
+
+  var session = {
+    id:            DB.genId('s'),
+    menuId:        menu.id,
+    menuNameVi:    menu.nameVi,
+    catId:         menu.catId,
+    catNameVi:     cat ? cat.nameVi : '',
+    therapistId:   selThrId,
+    therapistName: thr ? thr.name : '',
+    bedId:         bedId || null,
+    bedName:       bed ? bed.name : '',
+    priceIdx:      selPriceIdx,
+    priceLabel:    price.label || (price.duration ? price.duration + ' phút' : ''),
+    amount:        price.amount || 0,
+    duration:      dur,
+    startTime:     now,
+    endTime:       dur > 0 ? now + dur * 60000 : null,
+    note:          note,
+    status:        'active'
   };
 
-  if (!db.sessions) db.sessions = [];
-  db.sessions.push(session);
-  DB.saveDB(db);
-
+  if (!appDB.sessions) appDB.sessions = [];
+  appDB.sessions.push(session);
+  DB.saveDB(appDB);
   closeModal();
-  alert(`✅ Đã bắt đầu!\n${session.menuNameVi}\nKTV: ${session.therapistName}${session.bedName?' | '+session.bedName:''}\n${duration>0?'Kết thúc: '+DB.fmtTime(session.endTime):''}`);
+
+  var endStr = session.endTime ? '\nKết thúc dự kiến: ' + DB.fmtTime(session.endTime) : '';
+  alert('✅ Đã bắt đầu!\n' + session.menuNameVi +
+        '\nKỹ thuật viên: ' + session.therapistName +
+        (session.bedName ? ' | ' + session.bedName : '') + endStr);
   window.location.href = 'admin.html';
 }
+</script>
 
-// close modal on overlay click
-document.getElementById('sessionModal').addEventListener('click', function(e) {
-  if (e.target === this) closeModal();
-});
-
-init();
+<script>
+// Run after DOM + db.js both loaded
+window.addEventListener('load', function() { init(); });
 </script>
 </body>
 </html>
