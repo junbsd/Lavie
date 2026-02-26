@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lavie Spa - Quản Lý</title>
+<script src="db.js"></script>
+<style>
+:root{
+  --bg:#F5F7FA;--card:#fff;--border:#E2E8F0;--brown:#3E2310;--brown2:#5C3A1A;
+  --gold:#96621A;--gold-mid:#B87D2E;--green:#16A34A;--green-light:#DCFCE7;
+  --red:#DC2626;--red-light:#FEE2E2;--blue:#2563EB;--blue-light:#DBEAFE;
+  --yellow:#D97706;--yellow-light:#FEF3C7;--text:#1E293B;--text2:#475569;--text3:#94A3B8;
+  --shadow:rgba(0,0,0,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif,'Segoe UI',sans-serif;min-height:100vh;}
+
+/* TOP BAR */
+.topbar{background:var(--brown);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.topbar-logo{font-size:16px;font-weight:700;color:#E8C878;}
+.topbar-nav{display:flex;gap:4px;}
+.tnav{color:rgba(255,255,255,0.7);font-size:11px;padding:5px 10px;border-radius:12px;text-decoration:none;border:1px solid transparent;}
+.tnav:hover,.tnav.active{background:rgba(255,255,255,0.15);color:#fff;}
+
+/* PAGE TABS */
+.page-tabs{background:#fff;border-bottom:2px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 4px;}
+.page-tabs::-webkit-scrollbar{display:none;}
+.ptab{flex-shrink:0;padding:12px 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;}
+.ptab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+.page-content{padding:14px;max-width:600px;margin:0 auto;}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px var(--shadow);border:1px solid var(--border);}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+
+/* SESSION CARD */
+.session-card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px var(--shadow);border-left:4px solid var(--green);position:relative;}
+.session-card.finishing{border-left-color:var(--yellow);}
+.session-card.overtime{border-left-color:var(--red);}
+.sc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;}
+.sc-menu{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.3;flex:1;}
+.sc-amount{font-size:16px;font-weight:800;color:var(--gold);white-space:nowrap;}
+.sc-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;}
+.sc-badge{font-size:11px;padding:3px 8px;border-radius:8px;font-weight:600;}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-blue{background:var(--blue-light);color:var(--blue);}
+.badge-yellow{background:var(--yellow-light);color:var(--yellow);}
+.badge-red{background:var(--red-light);color:var(--red);}
+.sc-timer{font-size:22px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums;}
+.sc-timer.finishing{color:var(--yellow);}
+.sc-timer.overtime{color:var(--red);}
+.sc-note{font-size:11.5px;color:var(--text2);margin-top:5px;padding:6px 8px;background:var(--bg);border-radius:6px;border-left:3px solid var(--border);}
+.sc-actions{display:flex;gap:8px;margin-top:10px;}
+.btn-sm{padding:7px 14px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;flex:1;transition:all 0.2s;}
+.btn-complete{background:var(--green);color:#fff;}
+.btn-cancel2{background:var(--red-light);color:var(--red);border:1px solid var(--red);}
+.btn-edit-note{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);}
+
+/* SUMMARY STATS */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+.stat-box{background:var(--card);border-radius:11px;padding:12px;box-shadow:0 2px 6px var(--shadow);text-align:center;border:1px solid var(--border);}
+.stat-num{font-size:22px;font-weight:800;color:var(--gold);}
+.stat-label{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.filter-btn{padding:6px 13px;border-radius:16px;border:1.5px solid var(--border);background:var(--card);color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.filter-btn.active{background:var(--gold);border-color:var(--gold);color:#fff;}
+.date-input{padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:12px;background:var(--card);color:var(--text);}
+
+/* RECORD LIST */
+.record-item{background:var(--card);border-radius:10px;padding:11px 13px;margin-bottom:7px;box-shadow:0 1px 4px var(--shadow);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.rec-info{flex:1;}
+.rec-menu{font-size:13px;font-weight:700;color:var(--text);}
+.rec-meta{font-size:11px;color:var(--text2);margin-top:2px;}
+.rec-note{font-size:11px;color:var(--text3);margin-top:3px;font-style:italic;}
+.rec-amount{font-size:15px;font-weight:800;color:var(--gold);white-space:nowrap;}
+
+/* CHARTS placeholder */
+.chart-bar-wrap{margin-top:8px;}
+.chart-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.chart-label{font-size:11px;color:var(--text2);width:100px;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.chart-bar-bg{flex:1;background:var(--border);border-radius:4px;height:16px;overflow:hidden;}
+.chart-bar-fill{height:100%;background:var(--gold-mid);border-radius:4px;transition:width 0.4s ease;}
+.chart-val{font-size:11px;font-weight:700;color:var(--gold);width:70px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:16px;padding:20px;width:100%;max-width:380px;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.field-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;margin-top:10px;}
+.field-input{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);}
+.field-input:focus{outline:none;border-color:var(--gold);}
+.btn-row{display:flex;gap:8px;margin-top:14px;}
+.btn-primary{flex:1;padding:10px;border-radius:9px;background:var(--gold);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
+.btn-secondary{flex:1;padding:10px;border-radius:9px;background:var(--bg);color:var(--text2);font-size:14px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;}
+
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3);}
+.empty-icon{font-size:48px;margin-bottom:10px;}
+.empty-text{font-size:14px;}
+
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.section-title{font-size:15px;font-weight:700;color:var(--text);}
+.btn-export{padding:7px 13px;border-radius:8px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);font-size:12px;font-weight:600;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">🌿 Lavie Spa - Quản Lý</div>
+  <div class="topbar-nav">
+    <a class="tnav" href="index.html">📋 Menu</a>
+    <a class="tnav active" href="admin.html">⚙️ Quản lý</a>
+    <a class="tnav" href="settings.html">🛠 Cài đặt</a>
+  </div>
+</div>
+
+<div class="page-tabs">
+  <div class="ptab active" onclick="showPage('live')">🟢 Đang thực hiện</div>
+  <div class="ptab" onclick="showPage('records')">📋 Lịch sử</div>
+  <div class="ptab" onclick="showPage('stats')">📊 Thống kê</div>
+</div>
+
+<!-- LIVE SESSIONS -->
+<div id="page-live" class="page-content">
+  <div class="section-header">
+    <div class="section-title">Dịch vụ đang chạy</div>
+    <button class="btn-export" onclick="window.location.href='index.html'">+ Thêm dịch vụ</button>
+  </div>
+  <div id="liveList"></div>
+</div>
+
+<!-- RECORDS -->
+<div id="page-records" class="page-content" style="display:none">
+  <div class="section-header">
+    <div class="section-title">Lịch sử dịch vụ</div>
+    <button class="btn-export" onclick="exportRecords()">📥 Xuất Excel</button>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setRecordFilter('day')">Hôm nay</button>
+    <button class="filter-btn" onclick="setRecordFilter('week')">Tuần này</button>
+    <button class="filter-btn" onclick="setRecordFilter('month')">Tháng này</button>
+    <button class="filter-btn" onclick="setRecordFilter('year')">Năm này</button>
+    <button class="filter-btn" onclick="setRecordFilter('all')">Tất cả</button>
+  </div>
+  <div id="recordSummary" style="margin-bottom:10px;"></div>
+  <div id="recordList"></div>
+</div>
+
+<!-- STATS -->
+<div id="page-stats" class="page-content" style="display:none">
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setStatsFilter('day')">Hôm nay</button>
+    <button class="filter-btn" onclick="setStatsFilter('week')">Tuần này</button>
+    <button class="filter-btn" onclick="setStatsFilter('month')">Tháng</button>
+    <button class="filter-btn" onclick="setStatsFilter('year')">Năm</button>
+    <button class="filter-btn" onclick="setStatsFilter('all')">Tất cả</button>
+  </div>
+  <div id="statsContent"></div>
+</div>
+
+<!-- Note Edit Modal -->
+<div class="modal-overlay" id="noteModal">
+  <div class="modal-box">
+    <div class="modal-title">📝 Chỉnh sửa ghi chú</div>
+    <div class="field-label">Ghi chú</div>
+    <input class="field-input" id="noteInput" type="text" placeholder="Nhập ghi chú...">
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeNoteModal()">Hủy</button>
+      <button class="btn-primary" onclick="saveNote()">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let db;
+let recordFilter = 'day';
+let statsFilter = 'day';
+let editingSessionId = null;
+let timerInterval = null;
+
+function init() {
+  db = DB.loadDB();
+  renderLive();
+  renderRecords();
+  renderStats();
+  // Auto refresh every 30s
+  timerInterval = setInterval(() => { db = DB.loadDB(); renderLive(); }, 30000);
+}
+
+function showPage(name) {
+  ['live','records','stats'].forEach(p => {
+    document.getElementById('page-' + p).style.display = p === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.ptab').forEach((t,i) => {
+    t.classList.toggle('active', ['live','records','stats'][i] === name);
+  });
+  if (name === 'records') renderRecords();
+  if (name === 'stats') renderStats();
+}
+
+// ── LIVE SESSIONS ──
+function renderLive() {
+  const sessions = (db.sessions || []).filter(s => s.status === 'active');
+  const el = document.getElementById('liveList');
+  if (sessions.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">🛏️</div><div class="empty-text">Chưa có dịch vụ nào đang thực hiện.<br>Vào <a href="index.html">Menu</a> để bắt đầu.</div></div>`;
+    return;
+  }
+  el.innerHTML = sessions.map(s => {
+    const now = Date.now();
+    const remaining = s.endTime ? s.endTime - now : null;
+    const elapsed = now - s.startTime;
+    const elapsedMin = Math.floor(elapsed / 60000);
+    let timerClass = '', timerText = '';
+    let cardClass = '';
+    if (remaining !== null) {
+      const remMin = Math.floor(remaining / 60000);
+      const remSec = Math.floor((remaining % 60000) / 1000);
+      if (remaining > 0) {
+        timerClass = remaining < 300000 ? 'finishing' : '';
+        cardClass = remaining < 300000 ? 'finishing' : '';
+        timerText = `${String(Math.floor(remaining/60000)).padStart(2,'0')}:${String(remSec).padStart(2,'0')}`;
+      } else {
+        timerClass = 'overtime';
+        cardClass = 'overtime';
+        const overMin = Math.floor(-remaining / 60000);
+        timerText = `+${overMin} phút`;
+      }
+    } else {
+      timerText = `${elapsedMin} phút`;
+    }
+    return `<div class="session-card ${cardClass}" id="sc-${s.id}">
+      <div class="sc-top">
+        <div class="sc-menu">${s.menuNameVi}</div>
+        <div class="sc-amount">${DB.fmtMoney(s.amount)}</div>
+      </div>
+      <div class="sc-meta">
+        <span class="sc-badge badge-green">👤 ${s.therapistName}</span>
+        ${s.bedName?`<span class="sc-badge badge-blue">🛏 ${s.bedName}</span>`:''}
+        <span class="sc-badge badge-yellow">🕐 ${DB.fmtTime(s.startTime)}</span>
+        ${s.endTime?`<span class="sc-badge ${cardClass==='overtime'?'badge-red':'badge-blue'}">⏰ ${DB.fmtTime(s.endTime)}</span>`:''}
+      </div>
+      <div class="sc-timer ${timerClass}">${timerText}</div>
+      ${s.note?`<div class="sc-note">📝 ${s.note}</div>`:''}
+      <div class="sc-actions">
+        <button class="btn-sm btn-complete" onclick="completeSession('${s.id}')">✅ Hoàn thành</button>
+        <button class="btn-sm btn-edit-note" onclick="openNoteModal('${s.id}')">📝 Ghi chú</button>
+        <button class="btn-sm btn-cancel2" onclick="cancelSession('${s.id}')">✕ Hủy</button>
+      </div>
+    </div>`;
+  }).join('');
+  // live timer update
+  setTimeout(updateTimers, 1000);
+}
+
+function updateTimers() {
+  const sessions = (db.sessions || []).filter(s => s.status === 'active');
+  sessions.forEach(s => {
+    const el = document.getElementById('sc-' + s.id);
+    if (!el) return;
+    const now = Date.now();
+    const remaining = s.endTime ? s.endTime - now : null;
+    const elapsed = now - s.startTime;
+    const timerEl = el.querySelector('.sc-timer');
+    if (!timerEl) return;
+    if (remaining !== null) {
+      const remMin = Math.floor(remaining / 60000);
+      const remSec = Math.floor((remaining % 60000) / 1000);
+      if (remaining > 0) {
+        timerEl.textContent = `${String(Math.floor(remaining/60000)).padStart(2,'0')}:${String(remSec).padStart(2,'0')}`;
+        timerEl.className = `sc-timer ${remaining < 300000 ? 'finishing' : ''}`;
+      } else {
+        const overMin = Math.floor(-remaining / 60000);
+        timerEl.textContent = `+${overMin} phút`;
+        timerEl.className = 'sc-timer overtime';
+      }
+    } else {
+      timerEl.textContent = `${Math.floor(elapsed/60000)} phút`;
+    }
+  });
+  setTimeout(updateTimers, 1000);
+}
+
+function completeSession(id) {
+  if (!confirm('Hoàn thành dịch vụ này?')) return;
+  db = DB.loadDB();
+  const idx = db.sessions.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  const s = db.sessions[idx];
+  s.status = 'completed';
+  s.completedTime = Date.now();
+  if (!db.records) db.records = [];
+  db.records.push({ ...s });
+  db.sessions.splice(idx, 1);
+  DB.saveDB(db);
+  renderLive();
+}
+
+function cancelSession(id) {
+  if (!confirm('Hủy dịch vụ này?')) return;
+  db = DB.loadDB();
+  const idx = db.sessions.findIndex(s => s.id === id);
+  if (idx === -1) return;
+  db.sessions[idx].status = 'cancelled';
+  const s = db.sessions[idx];
+  if (!db.records) db.records = [];
+  db.records.push({ ...s, amount: 0 });
+  db.sessions.splice(idx, 1);
+  DB.saveDB(db);
+  renderLive();
+}
+
+function openNoteModal(id) {
+  editingSessionId = id;
+  const s = (db.sessions || []).find(s => s.id === id);
+  document.getElementById('noteInput').value = s?.note || '';
+  document.getElementById('noteModal').classList.add('show');
+}
+function closeNoteModal() {
+  document.getElementById('noteModal').classList.remove('show');
+  editingSessionId = null;
+}
+function saveNote() {
+  if (!editingSessionId) return;
+  db = DB.loadDB();
+  const s = db.sessions?.find(s => s.id === editingSessionId);
+  if (s) { s.note = document.getElementById('noteInput').value; DB.saveDB(db); }
+  closeNoteModal();
+  renderLive();
+}
+
+// ── RECORDS ──
+function getDateRange(filter) {
+  const now = new Date();
+  const start = new Date();
+  if (filter === 'day') { start.setHours(0,0,0,0); }
+  else if (filter === 'week') { start.setDate(now.getDate() - now.getDay()); start.setHours(0,0,0,0); }
+  else if (filter === 'month') { start.setDate(1); start.setHours(0,0,0,0); }
+  else if (filter === 'year') { start.setMonth(0,1); start.setHours(0,0,0,0); }
+  else return null;
+  return { from: start.getTime(), to: Date.now() };
+}
+
+function filterRecords(filter) {
+  const all = (db.records || []).filter(r => r.status === 'completed');
+  const range = getDateRange(filter);
+  if (!range) return all;
+  return all.filter(r => (r.completedTime || r.startTime) >= range.from && (r.completedTime || r.startTime) <= range.to);
+}
+
+function setRecordFilter(f) {
+  recordFilter = f;
+  document.querySelectorAll('#page-records .filter-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['day','week','month','year','all'][i] === f);
+  });
+  renderRecords();
+}
+
+function renderRecords() {
+  const records = filterRecords(recordFilter).sort((a,b) => (b.completedTime||b.startTime) - (a.completedTime||a.startTime));
+  const totalRevenue = records.reduce((s, r) => s + (r.amount || 0), 0);
+
+  document.getElementById('recordSummary').innerHTML = `
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">${records.length}</div><div class="stat-label">Lượt dịch vụ</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:17px;">${DB.fmtMoney(totalRevenue)}</div><div class="stat-label">Tổng doanh thu</div></div>
+    </div>`;
+
+  if (records.length === 0) {
+    document.getElementById('recordList').innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Chưa có dữ liệu trong khoảng thời gian này.</div></div>`;
+    return;
+  }
+  document.getElementById('recordList').innerHTML = records.map(r => {
+    const thr = db.therapists?.find(t => t.id === r.therapistId);
+    return `<div class="record-item">
+      <div class="rec-info">
+        <div class="rec-menu">${r.menuNameVi}</div>
+        <div class="rec-meta">
+          👤 ${r.therapistName || '—'} 
+          ${r.bedName ? `| 🛏 ${r.bedName}` : ''}
+          | 🕐 ${DB.fmtDateTime(r.completedTime || r.startTime)}
+          ${r.duration ? `| ⏱ ${r.duration}ph` : ''}
+        </div>
+        ${r.note ? `<div class="rec-note">📝 ${r.note}</div>` : ''}
+      </div>
+      <div class="rec-amount">${DB.fmtMoney(r.amount)}</div>
+    </div>`;
+  }).join('');
+}
+
+function exportRecords() {
+  const records = filterRecords(recordFilter);
+  DB.exportToCSV(`laviespa_records_${new Date().toISOString().slice(0,10)}.csv`,
+    ['Thời gian', 'Dịch vụ', 'KTV', 'Giường', 'Thời lượng', 'Doanh thu', 'Ghi chú'],
+    records.map(r => [
+      DB.fmtDateTime(r.completedTime || r.startTime),
+      r.menuNameVi, r.therapistName, r.bedName || '',
+      r.duration ? r.duration + ' phút' : '',
+      r.amount || 0, r.note || ''
+    ])
+  );
+}
+
+// ── STATS ──
+function setStatsFilter(f) {
+  statsFilter = f;
+  document.querySelectorAll('#page-stats .filter-btn').forEach((b, i) => {
+    b.classList.toggle('active', ['day','week','month','year','all'][i] === f);
+  });
+  renderStats();
+}
+
+function renderStats() {
+  const records = filterRecords(statsFilter);
+  const totalRevenue = records.reduce((s, r) => s + (r.amount || 0), 0);
+  const totalSessions = records.length;
+
+  // By therapist
+  const byTherapist = {};
+  records.forEach(r => {
+    const k = r.therapistName || 'Không rõ';
+    if (!byTherapist[k]) byTherapist[k] = { count: 0, revenue: 0 };
+    byTherapist[k].count++; byTherapist[k].revenue += r.amount || 0;
+  });
+
+  // By menu
+  const byMenu = {};
+  records.forEach(r => {
+    const k = r.menuNameVi;
+    if (!byMenu[k]) byMenu[k] = { count: 0, revenue: 0 };
+    byMenu[k].count++; byMenu[k].revenue += r.amount || 0;
+  });
+
+  // By category
+  const byCat = {};
+  records.forEach(r => {
+    const cat = db.categories?.find(c => c.id === r.catId);
+    const k = cat ? cat.nameVi : 'Khác';
+    if (!byCat[k]) byCat[k] = { count: 0, revenue: 0 };
+    byCat[k].count++; byCat[k].revenue += r.amount || 0;
+  });
+
+  const maxThr = Math.max(1, ...Object.values(byTherapist).map(v => v.revenue));
+  const maxMenu = Math.max(1, ...Object.values(byMenu).map(v => v.revenue));
+
+  document.getElementById('statsContent').innerHTML = `
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">${totalSessions}</div><div class="stat-label">Tổng lượt</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:16px;">${DB.fmtMoney(totalRevenue)}</div><div class="stat-label">Doanh thu</div></div>
+      <div class="stat-box"><div class="stat-num" style="font-size:16px;">${totalSessions > 0 ? DB.fmtMoney(Math.round(totalRevenue/totalSessions)) : '0₫'}</div><div class="stat-label">TB/lượt</div></div>
+      <div class="stat-box"><div class="stat-num">${Object.keys(byTherapist).length}</div><div class="stat-label">KTV hoạt động</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">👤 Theo kỹ thuật viên</div>
+      <div class="chart-bar-wrap">
+        ${Object.entries(byTherapist).sort((a,b) => b[1].revenue - a[1].revenue).map(([name, data]) => `
+          <div class="chart-row">
+            <div class="chart-label">${name}</div>
+            <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${Math.round(data.revenue/maxThr*100)}%"></div></div>
+            <div class="chart-val">${DB.fmtMoney(data.revenue)}<br><span style="font-size:10px;color:#94A3B8">${data.count} lượt</span></div>
+          </div>`).join('') || '<div style="color:#94A3B8;font-size:13px">Chưa có dữ liệu</div>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💆 Theo danh mục</div>
+      <div class="chart-bar-wrap">
+        ${Object.entries(byCat).sort((a,b) => b[1].revenue - a[1].revenue).map(([name, data]) => `
+          <div class="chart-row">
+            <div class="chart-label">${name}</div>
+            <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${Math.round(data.revenue/Math.max(1,...Object.values(byCat).map(v=>v.revenue))*100)}%"></div></div>
+            <div class="chart-val">${DB.fmtMoney(data.revenue)}<br><span style="font-size:10px;color:#94A3B8">${data.count} lượt</span></div>
+          </div>`).join('') || '<div style="color:#94A3B8;font-size:13px">Chưa có dữ liệu</div>'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🏆 Top dịch vụ (theo doanh thu)</div>
+      <div class="chart-bar-wrap">
+        ${Object.entries(byMenu).sort((a,b) => b[1].revenue - a[1].revenue).slice(0,8).map(([name, data]) => `
+          <div class="chart-row">
+            <div class="chart-label">${name}</div>
+            <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${Math.round(data.revenue/maxMenu*100)}%"></div></div>
+            <div class="chart-val">${DB.fmtMoney(data.revenue)}<br><span style="font-size:10px;color:#94A3B8">${data.count} lượt</span></div>
+          </div>`).join('') || '<div style="color:#94A3B8;font-size:13px">Chưa có dữ liệu</div>'}
+      </div>
+    </div>`;
+}
+
+document.getElementById('noteModal').addEventListener('click', function(e){ if(e.target===this) closeNoteModal(); });
+init();
+</script>
+</body>
+</html>

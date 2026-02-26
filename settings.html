@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lavie Spa - Cài đặt</title>
+<script src="db.js"></script>
+<style>
+:root{
+  --bg:#F5F7FA;--card:#fff;--border:#E2E8F0;--brown:#3E2310;--brown2:#5C3A1A;
+  --gold:#96621A;--gold-mid:#B87D2E;--green:#16A34A;--green-light:#DCFCE7;
+  --red:#DC2626;--red-light:#FEE2E2;--blue:#2563EB;--blue-light:#DBEAFE;
+  --yellow:#D97706;--yellow-light:#FEF3C7;--text:#1E293B;--text2:#475569;--text3:#94A3B8;
+  --shadow:rgba(0,0,0,0.06);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans','Segoe UI',sans-serif;min-height:100vh;}
+.topbar{background:var(--brown);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.topbar-logo{font-size:15px;font-weight:700;color:#E8C878;}
+.topbar-nav{display:flex;gap:4px;}
+.tnav{color:rgba(255,255,255,0.7);font-size:11px;padding:5px 10px;border-radius:12px;text-decoration:none;border:1px solid transparent;}
+.tnav:hover,.tnav.active{background:rgba(255,255,255,0.15);color:#fff;}
+
+.page-tabs{background:#fff;border-bottom:2px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;padding:0 4px;}
+.page-tabs::-webkit-scrollbar{display:none;}
+.ptab{flex-shrink:0;padding:11px 16px;font-size:12.5px;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all 0.2s;}
+.ptab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+.page-content{padding:14px;max-width:600px;margin:0 auto;display:none;}
+.page-content.active{display:block;}
+
+/* CARDS */
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:0 2px 6px var(--shadow);border:1px solid var(--border);}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+
+/* LIST ITEMS */
+.list-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);gap:8px;}
+.list-item:last-child{border-bottom:none;}
+.li-info{flex:1;}
+.li-name{font-size:13.5px;font-weight:700;color:var(--text);}
+.li-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+.li-actions{display:flex;gap:6px;}
+
+/* BUTTONS */
+.btn-icon{width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.15s;}
+.btn-edit{background:var(--blue-light);color:var(--blue);}
+.btn-delete{background:var(--red-light);color:var(--red);}
+.btn-toggle{background:var(--yellow-light);color:var(--yellow);}
+.btn-add{width:100%;padding:10px;border-radius:9px;background:var(--gold);color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;margin-top:8px;transition:all 0.2s;}
+.btn-add:hover{background:var(--brown2);}
+.btn-danger{background:var(--red-light);color:var(--red);border:1.5px solid var(--red);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-success{background:var(--green-light);color:var(--green);border:1.5px solid var(--green);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;}
+.btn-blue{background:var(--blue-light);color:var(--blue);border:1.5px solid var(--blue);padding:9px 16px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;}
+
+/* FORM */
+.field-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:4px;margin-top:10px;}
+.field-input,.field-select,.field-textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);}
+.field-textarea{resize:vertical;min-height:60px;}
+.field-input:focus,.field-select:focus,.field-textarea:focus{outline:none;border-color:var(--gold);}
+.price-row-form{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+.price-row-form input{flex:1;padding:7px 9px;border:1.5px solid var(--border);border-radius:7px;font-size:12px;}
+.price-row-form .del-price{background:var(--red-light);color:var(--red);border:none;border-radius:6px;padding:5px 8px;cursor:pointer;font-size:12px;}
+.add-price-btn{padding:6px 12px;border-radius:7px;background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);font-size:12px;cursor:pointer;margin-top:4px;}
+
+/* TRANSLATE STATUS */
+.translate-status{font-size:11px;padding:4px 8px;border-radius:6px;margin-top:6px;display:none;}
+.translate-status.loading{background:var(--yellow-light);color:var(--yellow);display:block;}
+.translate-status.done{background:var(--green-light);color:var(--green);display:block;}
+.translate-status.error{background:var(--red-light);color:var(--red);display:block;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:500;display:none;align-items:flex-end;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal-box{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:slideUp 0.28s ease;}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:14px;}
+.btn-row{display:flex;gap:8px;margin-top:14px;}
+.btn-primary{flex:1;padding:11px;border-radius:9px;background:var(--gold);color:#fff;font-size:14px;font-weight:700;border:none;cursor:pointer;}
+.btn-secondary{flex:1;padding:11px;border-radius:9px;background:var(--bg);color:var(--text2);font-size:14px;font-weight:600;border:1.5px solid var(--border);cursor:pointer;}
+
+/* BACKUP SECTION */
+.backup-row{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;}
+.chip-gold{background:var(--gold);color:#fff;}
+.chip-blue{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue);}
+.chip-green{background:var(--green-light);color:var(--green);border:1px solid var(--green);}
+.chip-red{background:var(--red-light);color:var(--red);border:1px solid var(--red);}
+
+/* NOTE SEARCH */
+.search-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;margin-bottom:10px;}
+.search-input:focus{outline:none;border-color:var(--gold);}
+.note-result{background:var(--card);border-radius:9px;padding:10px 12px;margin-bottom:7px;border:1px solid var(--border);}
+.nr-menu{font-size:13px;font-weight:700;color:var(--text);}
+.nr-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.nr-note{font-size:12px;color:var(--blue);margin-top:4px;padding:5px 7px;background:var(--blue-light);border-radius:6px;}
+.highlight{background:#FFF3A3;padding:1px 2px;border-radius:3px;}
+
+.tag{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:700;margin-left:4px;}
+.tag-active{background:var(--green-light);color:var(--green);}
+.tag-inactive{background:var(--border);color:var(--text3);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">🌿 Lavie Spa - Cài đặt</div>
+  <div class="topbar-nav">
+    <a class="tnav" href="index.html">📋 Menu</a>
+    <a class="tnav" href="admin.html">⚙️ Quản lý</a>
+    <a class="tnav active" href="settings.html">🛠 Cài đặt</a>
+  </div>
+</div>
+
+<div class="page-tabs">
+  <div class="ptab active" onclick="showPage('therapists')">👤 KTV</div>
+  <div class="ptab" onclick="showPage('menus')">📋 Menu</div>
+  <div class="ptab" onclick="showPage('categories')">🗂 Danh mục</div>
+  <div class="ptab" onclick="showPage('notes')">🔍 Ghi chú</div>
+  <div class="ptab" onclick="showPage('backup')">💾 Sao lưu</div>
+</div>
+
+<!-- THERAPISTS -->
+<div id="page-therapists" class="page-content active">
+  <div class="card">
+    <div class="card-title">Danh sách kỹ thuật viên
+      <button class="btn-icon btn-edit" onclick="openTherapistModal()">+</button>
+    </div>
+    <div id="therapistList"></div>
+    <button class="btn-add" onclick="openTherapistModal()">+ Thêm kỹ thuật viên</button>
+  </div>
+</div>
+
+<!-- MENUS -->
+<div id="page-menus" class="page-content">
+  <div class="card" style="padding:10px 14px;">
+    <div class="field-label" style="margin-top:0">Lọc theo danh mục</div>
+    <select class="field-select" id="menuCatFilter" onchange="renderMenuList()">
+      <option value="">-- Tất cả danh mục --</option>
+    </select>
+  </div>
+  <div id="menuList"></div>
+  <button class="btn-add" onclick="openMenuModal()">+ Thêm dịch vụ mới</button>
+</div>
+
+<!-- CATEGORIES -->
+<div id="page-categories" class="page-content">
+  <div class="card">
+    <div class="card-title">Danh mục dịch vụ
+      <button class="btn-icon btn-edit" onclick="openCatModal()">+</button>
+    </div>
+    <div id="catList"></div>
+    <button class="btn-add" onclick="openCatModal()">+ Thêm danh mục</button>
+  </div>
+</div>
+
+<!-- NOTE SEARCH -->
+<div id="page-notes" class="page-content">
+  <div class="card">
+    <div class="card-title">🔍 Tìm kiếm ghi chú</div>
+    <input class="search-input" type="text" id="noteSearch" placeholder="Nhập từ khóa tìm kiếm..." oninput="searchNotes()">
+    <div id="noteResults"></div>
+  </div>
+</div>
+
+<!-- BACKUP -->
+<div id="page-backup" class="page-content">
+  <div class="card">
+    <div class="card-title">💾 Sao lưu & Khôi phục</div>
+    <div class="backup-row" style="margin-bottom:12px;">
+      <button class="chip chip-gold" onclick="doBackup()">📦 Sao lưu JSON</button>
+      <label class="chip chip-green" style="cursor:pointer;">
+        📂 Khôi phục JSON <input type="file" accept=".json" style="display:none" onchange="doRestore(this)">
+      </label>
+    </div>
+    <p style="font-size:12px;color:var(--text3);">Sao lưu toàn bộ dữ liệu gồm menu, KTV, lịch sử và cài đặt.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📥 Xuất dữ liệu Excel (CSV)</div>
+    <div class="backup-row">
+      <button class="chip chip-blue" onclick="exportAll('records')">📋 Lịch sử dịch vụ</button>
+      <button class="chip chip-blue" onclick="exportAll('menus')">🗒 Danh sách menu</button>
+      <button class="chip chip-blue" onclick="exportAll('therapists')">👥 KTV</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="color:var(--red);">⚠️ Nguy hiểm</div>
+    <p style="font-size:12px;color:var(--text3);margin-bottom:10px;">Xóa toàn bộ dữ liệu và khởi động lại từ đầu. Không thể hoàn tác!</p>
+    <button class="btn-danger" onclick="resetDB()">🗑 Xóa toàn bộ dữ liệu</button>
+  </div>
+</div>
+
+<!-- Therapist Modal -->
+<div class="modal-overlay" id="therapistModal">
+  <div class="modal-box">
+    <div class="modal-title" id="thrModalTitle">Thêm kỹ thuật viên</div>
+    <input type="hidden" id="thrId">
+    <div class="field-label">Tên (bắt buộc) *</div>
+    <input class="field-input" id="thrName" type="text" placeholder="Tên KTV...">
+    <div class="field-label">Số điện thoại</div>
+    <input class="field-input" id="thrPhone" type="tel" placeholder="0901...">
+    <div class="field-label">Tài khoản ngân hàng</div>
+    <input class="field-input" id="thrBank" type="text" placeholder="MB Bank - 012345678">
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeThrModal()">Hủy</button>
+      <button class="btn-primary" onclick="saveThr()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<!-- Menu Modal -->
+<div class="modal-overlay" id="menuModal">
+  <div class="modal-box">
+    <div class="modal-title" id="menuModalTitle">Thêm dịch vụ</div>
+    <input type="hidden" id="menuId">
+    <div class="field-label">Danh mục *</div>
+    <select class="field-select" id="menuCatId"></select>
+    <div class="field-label">Tên dịch vụ (Tiếng Việt) *</div>
+    <input class="field-input" id="menuNameVi" type="text" placeholder="Tên dịch vụ bằng tiếng Việt...">
+    <div class="field-label">Mô tả (Tiếng Việt)</div>
+    <textarea class="field-textarea" id="menuDescVi" placeholder="Ngâm chân thảo dược + massage..."></textarea>
+    <div class="field-label">Giá dịch vụ</div>
+    <div id="priceRows"></div>
+    <button class="add-price-btn" onclick="addPriceRow()">+ Thêm mức giá</button>
+    <div class="translate-status" id="translateStatus">🔄 Đang dịch tự động...</div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeMenuModal()">Hủy</button>
+      <button class="btn-primary" onclick="saveMenu()">💾 Lưu & Dịch</button>
+    </div>
+  </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" id="catModal">
+  <div class="modal-box">
+    <div class="modal-title" id="catModalTitle">Thêm danh mục</div>
+    <input type="hidden" id="catId">
+    <div class="field-label">Tên danh mục (Tiếng Việt) *</div>
+    <input class="field-input" id="catNameVi" type="text" placeholder="VD: Massage Trị Liệu...">
+    <div class="field-label">Icon (emoji)</div>
+    <input class="field-input" id="catIcon" type="text" placeholder="💆" maxlength="4">
+    <div class="translate-status" id="catTranslateStatus"></div>
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="closeCatModal()">Hủy</button>
+      <button class="btn-primary" onclick="saveCat()">💾 Lưu</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let db;
+
+function init() {
+  db = DB.loadDB();
+  renderTherapists();
+  renderMenuList();
+  renderCatList();
+  populateCatSelects();
+}
+
+function showPage(name) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name)?.classList.add('active');
+  document.querySelectorAll('.ptab').forEach((t,i) => {
+    t.classList.toggle('active', ['therapists','menus','categories','notes','backup'][i] === name);
+  });
+  if (name === 'notes') { document.getElementById('noteSearch').value = ''; searchNotes(); }
+}
+
+// ── THERAPISTS ──
+function renderTherapists() {
+  const el = document.getElementById('therapistList');
+  if (db.therapists.length === 0) { el.innerHTML = '<p style="color:var(--text3);font-size:13px;">Chưa có KTV nào.</p>'; return; }
+  el.innerHTML = db.therapists.map(t => `
+    <div class="list-item">
+      <div class="li-info">
+        <div class="li-name">${t.name} <span class="tag ${t.active !== false ? 'tag-active':'tag-inactive'}">${t.active !== false ?'Hoạt động':'Nghỉ'}</span></div>
+        <div class="li-sub">${t.phone||''} ${t.bank ? '| '+t.bank : ''}</div>
+      </div>
+      <div class="li-actions">
+        <button class="btn-icon btn-toggle" onclick="toggleThr('${t.id}')" title="Bật/Tắt">⏸</button>
+        <button class="btn-icon btn-edit" onclick="openTherapistModal('${t.id}')">✏️</button>
+        <button class="btn-icon btn-delete" onclick="deleteThr('${t.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openTherapistModal(id) {
+  document.getElementById('thrModalTitle').textContent = id ? 'Sửa kỹ thuật viên' : 'Thêm kỹ thuật viên';
+  const t = id ? db.therapists.find(t => t.id === id) : null;
+  document.getElementById('thrId').value = id || '';
+  document.getElementById('thrName').value = t?.name || '';
+  document.getElementById('thrPhone').value = t?.phone || '';
+  document.getElementById('thrBank').value = t?.bank || '';
+  document.getElementById('therapistModal').classList.add('show');
+}
+function closeThrModal() { document.getElementById('therapistModal').classList.remove('show'); }
+function saveThr() {
+  const name = document.getElementById('thrName').value.trim();
+  if (!name) { alert('Vui lòng nhập tên KTV!'); return; }
+  const id = document.getElementById('thrId').value;
+  db = DB.loadDB();
+  if (id) {
+    const idx = db.therapists.findIndex(t => t.id === id);
+    if (idx !== -1) { db.therapists[idx].name = name; db.therapists[idx].phone = document.getElementById('thrPhone').value; db.therapists[idx].bank = document.getElementById('thrBank').value; }
+  } else {
+    db.therapists.push({ id: DB.genId('t'), name, phone: document.getElementById('thrPhone').value, bank: document.getElementById('thrBank').value, active: true });
+  }
+  DB.saveDB(db); closeThrModal(); renderTherapists();
+}
+function toggleThr(id) {
+  db = DB.loadDB();
+  const t = db.therapists.find(t => t.id === id);
+  if (t) { t.active = t.active === false ? true : false; DB.saveDB(db); renderTherapists(); }
+}
+function deleteThr(id) {
+  if (!confirm('Xóa KTV này?')) return;
+  db = DB.loadDB();
+  db.therapists = db.therapists.filter(t => t.id !== id);
+  DB.saveDB(db); renderTherapists();
+}
+
+// ── MENUS ──
+function populateCatSelects() {
+  const opts = db.categories.map(c => `<option value="${c.id}">${c.icon} ${c.nameVi}</option>`).join('');
+  document.getElementById('menuCatFilter').innerHTML = '<option value="">-- Tất cả --</option>' + opts;
+  document.getElementById('menuCatId').innerHTML = '<option value="">-- Chọn danh mục --</option>' + opts;
+}
+
+function renderMenuList() {
+  const catFilter = document.getElementById('menuCatFilter')?.value || '';
+  const menus = catFilter ? db.menus.filter(m => m.catId === catFilter) : db.menus;
+  const el = document.getElementById('menuList');
+  if (menus.length === 0) { el.innerHTML = '<div class="card" style="text-align:center;color:var(--text3)">Chưa có dịch vụ.</div>'; return; }
+
+  // Group by category
+  const grouped = {};
+  menus.forEach(m => {
+    const cat = db.categories.find(c => c.id === m.catId);
+    const key = cat ? cat.nameVi : 'Khác';
+    if (!grouped[key]) grouped[key] = { cat, items: [] };
+    grouped[key].items.push(m);
+  });
+
+  el.innerHTML = Object.entries(grouped).map(([catName, { cat, items }]) => `
+    <div class="card">
+      <div class="card-title">${cat?.icon||''} ${catName}</div>
+      ${items.map(m => `
+        <div class="list-item">
+          <div class="li-info">
+            <div class="li-name">${m.nameVi} <span class="tag ${m.active?'tag-active':'tag-inactive'}">${m.active?'Hiện':'Ẩn'}</span></div>
+            <div class="li-sub">${m.prices.map(p=>(p.duration?p.duration+'ph ':'')+DB.fmtMoney(p.amount)).join(' | ')}</div>
+            ${m.translations && Object.keys(m.translations).length > 0 ? `<div class="li-sub" style="color:var(--green)">✓ Đã dịch ${Object.keys(m.translations).filter(k=>!k.endsWith('_desc')).length} ngôn ngữ</div>` : '<div class="li-sub" style="color:var(--text3)">Chưa dịch</div>'}
+          </div>
+          <div class="li-actions">
+            <button class="btn-icon btn-toggle" onclick="toggleMenu('${m.id}')">👁</button>
+            <button class="btn-icon btn-edit" onclick="openMenuModal('${m.id}')">✏️</button>
+            <button class="btn-icon btn-delete" onclick="deleteMenu('${m.id}')">🗑</button>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+let priceCount = 0;
+function addPriceRow(duration='', amount='') {
+  priceCount++;
+  const id = 'pr' + priceCount;
+  const row = document.createElement('div');
+  row.className = 'price-row-form'; row.id = id;
+  row.innerHTML = `
+    <input type="text" placeholder="Thời lượng (vd: 60)" value="${duration}" class="dur-inp">
+    <input type="number" placeholder="Giá (VNĐ)" value="${amount}" class="amt-inp">
+    <button class="del-price" onclick="document.getElementById('${id}').remove()">✕</button>`;
+  document.getElementById('priceRows').appendChild(row);
+}
+
+function openMenuModal(id) {
+  priceCount = 0;
+  document.getElementById('menuModalTitle').textContent = id ? 'Sửa dịch vụ' : 'Thêm dịch vụ mới';
+  document.getElementById('menuId').value = id || '';
+  document.getElementById('translateStatus').className = 'translate-status';
+  document.getElementById('priceRows').innerHTML = '';
+  const m = id ? db.menus.find(m => m.id === id) : null;
+  document.getElementById('menuNameVi').value = m?.nameVi || '';
+  document.getElementById('menuDescVi').value = m?.descVi || '';
+  document.getElementById('menuCatId').value = m?.catId || '';
+  if (m?.prices?.length) { m.prices.forEach(p => addPriceRow(p.duration||p.label||'', p.amount||'')); }
+  else { addPriceRow(); }
+  document.getElementById('menuModal').classList.add('show');
+}
+function closeMenuModal() { document.getElementById('menuModal').classList.remove('show'); }
+
+async function saveMenu() {
+  const nameVi = document.getElementById('menuNameVi').value.trim();
+  const catId = document.getElementById('menuCatId').value;
+  if (!nameVi) { alert('Vui lòng nhập tên dịch vụ!'); return; }
+  if (!catId) { alert('Vui lòng chọn danh mục!'); return; }
+
+  const priceRows = document.querySelectorAll('#priceRows .price-row-form');
+  const prices = Array.from(priceRows).map(row => ({
+    duration: row.querySelector('.dur-inp')?.value.trim() || '',
+    amount: parseInt(row.querySelector('.amt-inp')?.value || '0') || 0
+  })).filter(p => p.amount > 0);
+
+  const descVi = document.getElementById('menuDescVi').value.trim();
+  const id = document.getElementById('menuId').value;
+
+  // Show translating status
+  const statusEl = document.getElementById('translateStatus');
+  statusEl.className = 'translate-status loading';
+  statusEl.textContent = '🔄 Đang dịch tự động sang các ngôn ngữ...';
+
+  // Translate
+  let translations = {};
+  try {
+    const [nameTranslations, descTranslations] = await Promise.all([
+      DB.translateToAllLangs(nameVi),
+      descVi ? DB.translateToAllLangs(descVi) : Promise.resolve({})
+    ]);
+    translations = { ...nameTranslations };
+    Object.entries(descTranslations).forEach(([lang, val]) => {
+      translations[lang + '_desc'] = val;
+    });
+    statusEl.className = 'translate-status done';
+    statusEl.textContent = '✅ Đã dịch thành công!';
+  } catch(e) {
+    statusEl.className = 'translate-status error';
+    statusEl.textContent = '⚠️ Lỗi dịch - lưu bằng tiếng Việt.';
+  }
+
+  db = DB.loadDB();
+  if (id) {
+    const idx = db.menus.findIndex(m => m.id === id);
+    if (idx !== -1) { db.menus[idx] = { ...db.menus[idx], catId, nameVi, descVi, prices, translations }; }
+  } else {
+    db.menus.push({ id: DB.genId('m'), catId, nameVi, descVi, prices, translations, active: true });
+  }
+  DB.saveDB(db);
+  setTimeout(() => { closeMenuModal(); renderMenuList(); }, 1000);
+}
+
+function toggleMenu(id) {
+  db = DB.loadDB();
+  const m = db.menus.find(m => m.id === id);
+  if (m) { m.active = !m.active; DB.saveDB(db); renderMenuList(); }
+}
+function deleteMenu(id) {
+  if (!confirm('Xóa dịch vụ này?')) return;
+  db = DB.loadDB();
+  db.menus = db.menus.filter(m => m.id !== id);
+  DB.saveDB(db); renderMenuList();
+}
+
+// ── CATEGORIES ──
+function renderCatList() {
+  const el = document.getElementById('catList');
+  el.innerHTML = db.categories.map(c => `
+    <div class="list-item">
+      <div class="li-info">
+        <div class="li-name">${c.icon||''} ${c.nameVi}</div>
+        <div class="li-sub">${db.menus.filter(m => m.catId === c.id).length} dịch vụ | ${Object.keys(c.translations||{}).filter(k=>!k.endsWith('_desc')).length} ngôn ngữ</div>
+      </div>
+      <div class="li-actions">
+        <button class="btn-icon btn-edit" onclick="openCatModal('${c.id}')">✏️</button>
+        <button class="btn-icon btn-delete" onclick="deleteCat('${c.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+}
+
+function openCatModal(id) {
+  document.getElementById('catModalTitle').textContent = id ? 'Sửa danh mục' : 'Thêm danh mục';
+  document.getElementById('catId').value = id || '';
+  const c = id ? db.categories.find(c => c.id === id) : null;
+  document.getElementById('catNameVi').value = c?.nameVi || '';
+  document.getElementById('catIcon').value = c?.icon || '';
+  document.getElementById('catTranslateStatus').className = 'translate-status';
+  document.getElementById('catModal').classList.add('show');
+}
+function closeCatModal() { document.getElementById('catModal').classList.remove('show'); }
+async function saveCat() {
+  const nameVi = document.getElementById('catNameVi').value.trim();
+  if (!nameVi) { alert('Nhập tên danh mục!'); return; }
+  const icon = document.getElementById('catIcon').value.trim() || '📋';
+  const id = document.getElementById('catId').value;
+  const statusEl = document.getElementById('catTranslateStatus');
+  statusEl.className = 'translate-status loading'; statusEl.textContent = '🔄 Đang dịch...';
+  const translations = await DB.translateToAllLangs(nameVi).catch(() => ({}));
+  statusEl.className = 'translate-status done'; statusEl.textContent = '✅ Đã dịch!';
+  db = DB.loadDB();
+  if (id) {
+    const idx = db.categories.findIndex(c => c.id === id);
+    if (idx !== -1) { db.categories[idx] = { ...db.categories[idx], nameVi, icon, translations }; }
+  } else {
+    db.categories.push({ id: DB.genId('c'), nameVi, icon, translations });
+  }
+  DB.saveDB(db);
+  setTimeout(() => { closeCatModal(); renderCatList(); renderMenuList(); populateCatSelects(); }, 800);
+}
+function deleteCat(id) {
+  const count = db.menus.filter(m => m.catId === id).length;
+  if (!confirm(`Xóa danh mục này? ${count > 0 ? `(${count} dịch vụ sẽ bị mất)` : ''}`)) return;
+  db = DB.loadDB();
+  db.categories = db.categories.filter(c => c.id !== id);
+  db.menus = db.menus.filter(m => m.catId !== id);
+  DB.saveDB(db); renderCatList(); renderMenuList(); populateCatSelects();
+}
+
+// ── NOTE SEARCH ──
+function searchNotes() {
+  const q = document.getElementById('noteSearch').value.trim().toLowerCase();
+  const el = document.getElementById('noteResults');
+  const all = (db.records || []).filter(r => r.note && r.note.trim());
+  if (!q) {
+    el.innerHTML = all.length === 0 ?
+      '<p style="color:var(--text3);font-size:13px;">Chưa có ghi chú nào.</p>' :
+      all.slice(0,20).map(r => noteCard(r, '')).join('');
+    return;
+  }
+  const results = all.filter(r => r.note.toLowerCase().includes(q) || r.menuNameVi.toLowerCase().includes(q) || r.therapistName?.toLowerCase().includes(q));
+  el.innerHTML = results.length === 0 ?
+    `<p style="color:var(--text3);font-size:13px;">Không tìm thấy kết quả cho "<b>${q}</b>"</p>` :
+    results.map(r => noteCard(r, q)).join('');
+}
+function noteCard(r, q) {
+  const hl = (txt) => !q ? txt : txt.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), `<span class="highlight">$1</span>`);
+  return `<div class="note-result">
+    <div class="nr-menu">${hl(r.menuNameVi)}</div>
+    <div class="nr-meta">👤 ${r.therapistName||'—'} | ${DB.fmtDateTime(r.completedTime||r.startTime)} | ${DB.fmtMoney(r.amount)}</div>
+    <div class="nr-note">📝 ${hl(r.note)}</div>
+  </div>`;
+}
+
+// ── BACKUP ──
+function doBackup() { DB.backupDB(DB.loadDB()); }
+function doRestore(input) {
+  const file = input.files[0]; if (!file) return;
+  DB.restoreDB(file, (ok, data) => {
+    if (ok) { db = data; init(); alert('✅ Khôi phục thành công!'); }
+    else { alert('❌ File không hợp lệ!'); }
+  });
+}
+
+function exportAll(type) {
+  db = DB.loadDB();
+  if (type === 'records') {
+    DB.exportToCSV('laviespa_records.csv',
+      ['Thời gian','Dịch vụ','KTV','Giường','Thời lượng','Doanh thu','Ghi chú'],
+      (db.records||[]).filter(r=>r.status==='completed').map(r => [
+        DB.fmtDateTime(r.completedTime||r.startTime), r.menuNameVi, r.therapistName, r.bedName||'', r.duration?r.duration+' phút':'', r.amount||0, r.note||''
+      ]));
+  } else if (type === 'menus') {
+    DB.exportToCSV('laviespa_menus.csv',
+      ['Danh mục','Tên dịch vụ','Mô tả','Giá'],
+      db.menus.map(m => {
+        const cat = db.categories.find(c=>c.id===m.catId);
+        return [cat?.nameVi||'', m.nameVi, m.descVi||'', m.prices.map(p=>(p.duration?p.duration+'ph ':'')+DB.fmtMoney(p.amount)).join(' | ')];
+      }));
+  } else if (type === 'therapists') {
+    DB.exportToCSV('laviespa_therapists.csv',
+      ['Tên','Điện thoại','Tài khoản ngân hàng','Trạng thái'],
+      db.therapists.map(t => [t.name, t.phone||'', t.bank||'', t.active!==false?'Hoạt động':'Nghỉ']));
+  }
+}
+
+function resetDB() {
+  if (!confirm('⚠️ XÓA TOÀN BỘ DỮ LIỆU?\nHành động này KHÔNG THỂ hoàn tác!')) return;
+  if (!confirm('Bạn chắc chắn muốn xóa tất cả?')) return;
+  localStorage.removeItem('laviespa_v2');
+  location.reload();
+}
+
+// Close modals on overlay click
+['therapistModal','menuModal','catModal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', function(e){ if(e.target===this) this.classList.remove('show'); });
+});
+
+init();
+</script>
+</body>
+</html>
