@@ -123,7 +123,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans','Segoe UI',s
 </div>
 <div id="appBody" style="display:none">
 <div class="topbar">
-  <div class="topbar-logo">🌿 Lavie Spa - Quản Lý</div>
+  <div class="topbar-logo"><img id="topLogo" src="" style="height:28px;object-fit:contain;vertical-align:middle;margin-right:6px" alt="">Quản Lý</div>
   <div style="display:flex;gap:4px">
     <a class="tnav" href="index.html">📋 Menu</a>
     <a class="tnav active" href="admin.html">⚙️ Quản lý</a>
@@ -210,6 +210,18 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc,
 
 const app = initializeApp(DB.FIREBASE_CONFIG);
 const fs  = getFirestore(app);
+
+// Set logo images
+(function(){
+  const src = DB.LAVIE_LOGO_B64;
+  if(!src) return;
+  document.querySelectorAll('[id$="Logo"],[id$="logo"],[id$="Logo"],[id="topLogo"]').forEach(el=>{if(el.tagName==='IMG') el.src=src;});
+  // try specific ids
+  ['adminLoadLogo','settingsLoadLogo','topLogo'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.src=src;
+  });
+})();
 
 let appData = { categories:[], menus:[], therapists:[], beds:[], sessions:[], records:[] };
 let recF = 'day', statF = 'day';
@@ -520,7 +532,16 @@ function renderStats(){
     <div class="card"><div class="card-title">🏆 Top dịch vụ</div>${barRows(Object.fromEntries(Object.entries(byMenu).sort((a,b)=>b[1].revenue-a[1].revenue).slice(0,8)),maxMenu)}</div>`;
 }
 
-loadAll();
+let _retries=0;
+async function _loadRetry(){
+  try{await loadAll();}
+  catch(e){
+    _retries++;
+    if(_retries<3){setTimeout(_loadRetry,2000);}
+    else{const lt=document.querySelector('.loading-screen div:last-child');if(lt)lt.textContent='Lỗi kết nối. Vui lòng tải lại.';}
+  }
+}
+_loadRetry();
 </script>
 </body>
 </html>

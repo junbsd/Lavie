@@ -107,14 +107,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
 
 <!-- Loading screen -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-logo">Lavie <span>Spa</span></div>
+  <img id="loadingLogo" src="" style="height:60px;margin-bottom:8px;object-fit:contain;" alt="Lavie Spa">
   <div class="loading-spinner"></div>
   <div class="loading-text">Đang tải dữ liệu...</div>
 </div>
 
 <div id="appBody" style="display:none">
 <div class="nav-bar">
-  <div class="nav-logo">🌿 Lavie Spa</div>
+  <img id="navLogo" src="" style="height:32px;object-fit:contain;vertical-align:middle;" alt="Lavie Spa">
   <div class="nav-links">
     <a class="nav-link active" href="index.html">📋 Menu</a>
     <a class="nav-link" href="admin.html">⚙️ Quản lý</a>
@@ -132,8 +132,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
   <button class="lang-btn" onclick="setLang('ru')" data-lang="ru">🇷🇺 Рус</button>
 </div>
 <div class="header">
-  <div class="logo-row"><div class="logo-icon">🌿</div><div class="logo-name">Lavie <span>Spa</span></div></div>
-  <div class="logo-tag">Vui về khi đến, khoẻ đẹp khi về</div>
+  <div style="display:flex;justify-content:center;margin-bottom:6px;">
+    <img id="headerLogo" src="" style="max-height:90px;max-width:280px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));" alt="Lavie Spa">
+  </div>
   <div class="hdr-title" id="hdrTitle">Bảng Giá Dịch Vụ</div>
 </div>
 <div class="cat-tabs" id="catTabs"></div>
@@ -172,10 +173,21 @@ const fs  = getFirestore(app);
 
 // ── In-memory cache ──
 let appData = { categories:[], menus:[], therapists:[], beds:[], sessions:[] };
+
+// Set logos as soon as db.js is loaded
+function setLogos() {
+  const src = DB.LAVIE_LOGO_B64;
+  if (!src) return;
+  ['loadingLogo','navLogo','headerLogo'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.src = src;
+  });
+}
 let appLang = 'vi';
 let currentCat = null;
 let selMenuId=null, selPriceIdx=null, selThrId=null;
 
+setLogos();
 const TITLES={vi:'Bảng Giá Dịch Vụ',ko:'서비스 가격표',en:'Service Price List',ja:'サービス料金表',zh:'服务价目表',th:'รายการราคาบริการ',ms:'Senarai Harga',ru:'Прайс-лист'};
 const MIN_L={vi:'phút',ko:'분',en:'min',ja:'分',zh:'分钟',th:'นาที',ms:'minit',ru:'мин'};
 const NOTE_MALE={vi:'★ Khách nam phụ thu thêm 50k/người',ko:'★ 남성 고객 50k 추가',en:'★ Male guests: +50k',ja:'★ 男性お客様 +50k',zh:'★ 男性顾客额外50k',th:'★ ลูกค้าชาย +50k',ms:'★ Pelanggan lelaki +50k',ru:'★ Мужчины +50k'};
@@ -224,10 +236,13 @@ async function loadAll() {
     appData.therapists = thrSnap.docs.map(d=>d.data());
   }
 
-  // Active sessions (real-time listener)
-  onSnapshot(collection(fs,'sessions'), snap => {
-    appData.sessions = snap.docs.map(d=>d.data()).filter(s=>s.status==='active');
-  });
+  // Active sessions (real-time listener) - with error handling
+  try {
+    onSnapshot(collection(fs,'sessions'), 
+      snap => { appData.sessions = snap.docs.map(d=>d.data()).filter(s=>s.status==='active'); },
+      err => { console.warn('Session listener error:', err); }
+    );
+  } catch(e) { console.warn('onSnapshot setup error:', e); }
 
   currentCat = appData.categories[0]?.id || null;
   document.getElementById('loadingScreen').style.display = 'none';
@@ -257,7 +272,10 @@ function tName(item){
 function tDesc(item){
   if(!item) return '';
   if(appLang==='vi') return item.descVi||'';
-  return (item.translations&&item.translations[appLang+'_desc'])||item.descVi||'';
+  // Try translated desc, then fall back to Vi desc
+  const translated = item.translations&&item.translations[appLang+'_desc'];
+  if(translated && translated.trim()) return translated;
+  return item.descVi||''; // show Vietnamese as fallback
 }
 function fmtMin(d){ return d?(d+' '+(MIN_L[appLang]||'min')):''; }
 function showVi(item){ return appLang!=='vi'&&item.nameVi; }
@@ -395,7 +413,24 @@ async function doStartSession(){
   window.location.href='admin.html';
 }
 
-loadAll();
+// Retry logic for Firestore loading
+let loadRetries = 0;
+async function loadWithRetry() {
+  try {
+    await loadAll();
+  } catch(e) {
+    loadRetries++;
+    console.error('Load error (attempt ' + loadRetries + '):', e);
+    if (loadRetries < 3) {
+      document.querySelector('.loading-text').textContent = 'Đang thử lại... (' + loadRetries + '/3)';
+      setTimeout(loadWithRetry, 2000);
+    } else {
+      document.querySelector('.loading-text').textContent = 'Lỗi kết nối. Vui lòng tải lại trang.';
+      document.querySelector('.loading-text').style.color = '#C0392B';
+    }
+  }
+}
+loadWithRetry();
 </script>
 </body>
 </html>
