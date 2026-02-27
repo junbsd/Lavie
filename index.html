@@ -19,7 +19,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
 .lang-bar::-webkit-scrollbar{display:none;}
 .lang-btn{flex-shrink:0;padding:5px 11px;border-radius:15px;border:1.5px solid rgba(255,255,255,.25);background:transparent;color:#EDD9B0;font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap;}
 .lang-btn.active{background:var(--gold-mid);border-color:var(--gold-mid);color:#fff;font-weight:700;}
-.header{background:linear-gradient(160deg,#2E1508,#5C3010);padding:20px 20px 28px;text-align:center;position:relative;overflow:hidden;}
+.header{background:linear-gradient(160deg,#2E1508,#5C3010);padding:14px 20px 26px;text-align:center;position:relative;overflow:hidden;}
 .header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:18px;background:var(--bg);border-radius:18px 18px 0 0;}
 .logo-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
 .logo-icon{width:38px;height:38px;background:var(--gold-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
@@ -107,7 +107,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
 
 <!-- Loading screen -->
 <div class="loading-screen" id="loadingScreen">
-  <img id="loadingLogo" src="" style="height:60px;margin-bottom:8px;object-fit:contain;" alt="Lavie Spa">
+  <img id="loadingLogo" src="" style="height:65px;margin-bottom:10px;object-fit:contain;" alt="Lavie Spa">
   <div class="loading-spinner"></div>
   <div class="loading-text">Đang tải dữ liệu...</div>
 </div>
@@ -132,8 +132,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans',sans-serif;m
   <button class="lang-btn" onclick="setLang('ru')" data-lang="ru">🇷🇺 Рус</button>
 </div>
 <div class="header">
-  <div style="display:flex;justify-content:center;margin-bottom:6px;">
-    <img id="headerLogo" src="" style="max-height:90px;max-width:280px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.3));" alt="Lavie Spa">
+  <div style="display:flex;justify-content:center;align-items:center;padding:8px 0 4px;">
+    <img id="headerLogo" src="" style="max-height:95px;max-width:320px;object-fit:contain;" alt="Lavie Spa">
   </div>
   <div class="hdr-title" id="hdrTitle">Bảng Giá Dịch Vụ</div>
 </div>
@@ -198,22 +198,58 @@ async function loadAll() {
   const configRef = doc(fs, 'config', 'main');
   let configSnap  = await getDoc(configRef);
 
+  // ── 번역 버전 관리: db.js가 바뀌면 자동으로 Firestore 업데이트 ──
+  const TRANS_VERSION = 'v6_desc'; // 버전 바꾸면 강제 업데이트
   const needsSeed = !configSnap.exists();
-  // Also re-seed if menus have no translations (old data)
   let needsReseed = needsSeed;
+
   if (!needsSeed) {
     const cfg0 = configSnap.data();
+    // 버전 체크: _desc 번역이 없거나 버전이 다르면 업데이트
     const firstMenu = (cfg0.menus || [])[0];
-    if (!firstMenu || !firstMenu.translations || Object.keys(firstMenu.translations).length === 0) {
-      needsReseed = true;
-    }
+    const hasDesc = firstMenu?.translations && 
+                    Object.keys(firstMenu.translations).some(k => k.endsWith('_desc'));
+    const hasVersion = cfg0._transVersion === TRANS_VERSION;
+    if (!hasDesc || !hasVersion) needsReseed = true;
   }
 
   if (needsReseed) {
+    // Firestore에 저장된 menus와 DEFAULT_DATA를 병합
+    // 가격, active 상태 등 운영자가 수정한 값은 보존하고 번역만 업데이트
+    let mergedMenus = DB.DEFAULT_DATA.menus;
+    let mergedCats  = DB.DEFAULT_DATA.categories;
+    let mergedBeds  = DB.DEFAULT_DATA.beds;
+
+    if (!needsSeed) {
+      const existingData = configSnap.data();
+      const existingMenuMap = {};
+      (existingData.menus || []).forEach(m => { existingMenuMap[m.id] = m; });
+
+      // 기존 메뉴의 가격·active 상태 보존 + DEFAULT 번역 적용
+      mergedMenus = DB.DEFAULT_DATA.menus.map(def => {
+        const existing = existingMenuMap[def.id];
+        if (!existing) return def;
+        return Object.assign({}, def, {
+          prices: existing.prices || def.prices,
+          active: existing.active !== undefined ? existing.active : def.active,
+          // 번역은 def(최신)에서 가져옴
+          translations: def.translations
+        });
+      });
+
+      // 기존에만 있는 커스텀 메뉴 추가
+      (existingData.menus || []).forEach(m => {
+        if (!mergedMenus.find(x => x.id === m.id)) mergedMenus.push(m);
+      });
+
+      mergedBeds = existingData.beds || DB.DEFAULT_DATA.beds;
+    }
+
     await setDoc(configRef, {
-      categories: DB.DEFAULT_DATA.categories,
-      menus:      DB.DEFAULT_DATA.menus,
-      beds:       DB.DEFAULT_DATA.beds
+      categories: mergedCats,
+      menus:      mergedMenus,
+      beds:       mergedBeds,
+      _transVersion: TRANS_VERSION
     });
     configSnap = await getDoc(configRef);
   }
