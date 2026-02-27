@@ -289,7 +289,24 @@ async function loadAll(){
     getDocs(collection(fs,'therapists')),
     getDocs(collection(fs,'records'))
   ]);
-  if(configSnap.exists()){
+
+  // Re-seed if no data or no translations
+  let needReseed = !configSnap.exists();
+  if (!needReseed) {
+    const cfg0 = configSnap.data();
+    const m0 = (cfg0.menus||[])[0];
+    if (!m0 || !m0.translations || Object.keys(m0.translations).length === 0) needReseed = true;
+  }
+  if (needReseed) {
+    await setDoc(doc(fs,'config','main'),{
+      categories: DB.DEFAULT_DATA.categories,
+      menus:      DB.DEFAULT_DATA.menus,
+      beds:       DB.DEFAULT_DATA.beds
+    });
+    appData.categories = DB.DEFAULT_DATA.categories;
+    appData.menus      = DB.DEFAULT_DATA.menus;
+    appData.beds       = DB.DEFAULT_DATA.beds;
+  } else if(configSnap.exists()){
     const cfg=configSnap.data();
     appData.categories=cfg.categories||[];
     appData.menus=cfg.menus||[];
@@ -473,7 +490,7 @@ window.saveMenu=async function(){
 
   if(needTranslate){
     stEl.className='trans-st loading';
-    stEl.textContent='🔄 Đang dịch tự động sang 7 ngôn ngữ... Vui lòng chờ';
+    stEl.textContent='🔄 Đang dịch tự động (Google Translate)... Vui lòng chờ';
     saveBtn.disabled=true;
     try{
       const [nt,dt]=await Promise.all([
@@ -482,16 +499,17 @@ window.saveMenu=async function(){
       ]);
       translations={...nt};
       Object.entries(dt).forEach(([l,v])=>{translations[l+'_desc']=v;});
+      const cnt=Object.keys(nt).filter(k=>nt[k]&&nt[k]!==nameVi).length;
       stEl.className='trans-st done';
-      stEl.textContent='✅ Đã dịch thành công '+Object.keys(nt).length+' ngôn ngữ! (Lưu vào DB)';
+      stEl.textContent='✅ Đã dịch thành công '+cnt+'/7 ngôn ngữ — lưu vào Firestore!';
     }catch(e){
       stEl.className='trans-st error';
-      stEl.textContent='⚠️ Lỗi dịch - lưu bằng tiếng Việt. Có thể dịch lại sau.';
+      stEl.textContent='⚠️ Lỗi dịch - lưu bằng tiếng Việt. Vào trang menu, đổi ngôn ngữ để kiểm tra.';
       translations={};
     }
   } else {
     stEl.className='trans-st done';
-    stEl.textContent='✅ Đã có bản dịch — dùng lại từ DB.';
+    stEl.textContent='✅ Đã có bản dịch trong DB — dùng lại, không cần dịch lại.';
   }
 
   if(editMenuId){
@@ -633,20 +651,9 @@ window.renderNoteSearch=function(){
     results.sort((a,b)=>(b.completedTime||b.startTime)-(a.completedTime||a.startTime)).map(nc).join('');
 };
 
-// ─────────────── TRANSLATION ───────────────
+// ─────────────── TRANSLATION (Google Translate 무료 API) ───────────────
 async function translateText(viText){
-  if(!viText||!viText.trim()) return {};
-  const prompt=`Translate this Vietnamese spa service text to 7 languages.\nReturn ONLY valid JSON, no markdown.\nVietnamese: "${viText}"\nReturn: {"ko":"...","en":"...","ja":"...","zh":"...","th":"...","ms":"...","ru":"..."}`;
-  const resp=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})
-  });
-  const data=await resp.json();
-  const text=(data.content||[]).map(b=>b.text||'').join('');
-  const match=text.match(/\{[\s\S]*\}/);
-  if(match) return JSON.parse(match[0]);
-  return {};
+  return DB.translateViaGoogle(viText);
 }
 
 // ─────────────── BACKUP / RESTORE ───────────────

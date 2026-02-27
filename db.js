@@ -1,9 +1,10 @@
 // ============================================================
-// db.js  —  Lavie Spa  v4  (Firebase Firestore)
-// !! 아래 firebaseConfig 값을 본인 Firebase 프로젝트 값으로 교체하세요 !!
+// db.js  —  Lavie Spa  v5
+// - Firebase Firestore 연동
+// - 모든 번역 사전 내장 (CORS 오류 없음)
+// - 신규 메뉴 추가 시 Google Translate 무료 API 사용
 // ============================================================
 
-// ── Firebase 설정 (스크린샷의 값 그대로) ──
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyBdaLQFG_Tm1_wBAEt-AN7_pXmjCmjh-sI",
   authDomain:        "lavie-spa.firebaseapp.com",
@@ -13,127 +14,228 @@ const FIREBASE_CONFIG = {
   appId:             "1:717486824098:web:1a82790cf76f3d4381d5fb"
 };
 
-// ── 기본 데이터 (첫 실행 시 Firestore에 저장됨) ──
 const DEFAULT_DATA = {
   therapists: [
     { id:'t1', name:'Lan',  phone:'', bank:'', active:true },
     { id:'t2', name:'Hoa',  phone:'', bank:'', active:true },
     { id:'t3', name:'Mai',  phone:'', bank:'', active:true },
-    { id:'t4', name:'Ngọc', phone:'', bank:'', active:true }
+    { id:'t4', name:'Ngoc', phone:'', bank:'', active:true }
   ],
   beds: [
-    { id:'b1', name:'Giường 1' },
-    { id:'b2', name:'Giường 2' },
-    { id:'b3', name:'Giường 3' },
-    { id:'b4', name:'Giường 4' },
-    { id:'b5', name:'Giường 5' },
-    { id:'b6', name:'Giường 6' }
+    { id:'b1', name:'Giuong 1' },
+    { id:'b2', name:'Giuong 2' },
+    { id:'b3', name:'Giuong 3' },
+    { id:'b4', name:'Giuong 4' },
+    { id:'b5', name:'Giuong 5' },
+    { id:'b6', name:'Giuong 6' }
   ],
   categories: [
-    { id:'c1', nameVi:'Massage Trị Liệu',   icon:'💆', translations:{} },
-    { id:'c2', nameVi:'Body Massage',         icon:'🌿', translations:{} },
-    { id:'c3', nameVi:'Diện Chẩn',           icon:'✨', translations:{} },
-    { id:'c4', nameVi:'Gội Đầu Dưỡng Sinh', icon:'💇', translations:{} },
-    { id:'c5', nameVi:'Chăm Sóc Da',         icon:'🌸', translations:{} },
-    { id:'c6', nameVi:'Triệt Lông',          icon:'⚡', translations:{} }
+    { id:'c1', nameVi:'Massage Tri Lieu', icon:'💆',
+      translations:{ko:'치료 마사지',en:'Therapeutic Massage',ja:'治療マッサージ',zh:'治疗按摩',th:'นวดบำบัด',ms:'Urut Terapi',ru:'Лечебный массаж'} },
+    { id:'c2', nameVi:'Body Massage', icon:'🌿',
+      translations:{ko:'바디 마사지',en:'Body Massage',ja:'ボディマッサージ',zh:'全身按摩',th:'นวดตัว',ms:'Urut Badan',ru:'Массаж тела'} },
+    { id:'c3', nameVi:'Dien Chan', icon:'✨',
+      translations:{ko:'경혈 마사지',en:'Facial Acupressure',ja:'経穴マッサージ',zh:'面诊',th:'การกดจุด',ms:'Akupresur',ru:'Акупрессура'} },
+    { id:'c4', nameVi:'Goi Dau Duong Sinh', icon:'💇',
+      translations:{ko:'헤드 스파',en:'Hair Wash & Wellness',ja:'ヘッドスパ',zh:'洗发养生',th:'สระผมและบำรุง',ms:'Cuci Rambut',ru:'Оздоровительный мытьё'} },
+    { id:'c5', nameVi:'Cham Soc Da', icon:'🌸',
+      translations:{ko:'피부 관리',en:'Skin Care',ja:'スキンケア',zh:'皮肤护理',th:'ดูแลผิว',ms:'Penjagaan Kulit',ru:'Уход за кожей'} },
+    { id:'c6', nameVi:'Triet Long', icon:'⚡',
+      translations:{ko:'제모',en:'Hair Removal',ja:'脱毛',zh:'脱毛',th:'กำจัดขน',ms:'Penyingkiran Bulu',ru:'Удаление волос'} }
   ],
   menus: [
-    {id:'m1', catId:'c1',active:true,nameVi:'Massage cổ vai gáy trị liệu',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay + đá nóng + dầu trị liệu + đắp mắt thảo dược',prices:[{duration:'60',amount:250000},{duration:'90',amount:300000}],translations:{}},
-    {id:'m2', catId:'c1',active:true,nameVi:'Đả thông kinh lạc lưng vai cổ gáy - tay chuyên sâu',descVi:'Ngâm chân thảo dược + massage trị liệu + dầu trị liệu + đá nóng + đắp mắt thảo dược + xông hơi',prices:[{duration:'90',amount:350000}],translations:{}},
-    {id:'m3', catId:'c1',active:true,nameVi:'Massage chân thư giãn',descVi:'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược',prices:[{duration:'60',amount:250000}],translations:{}},
-    {id:'m4', catId:'c1',active:true,nameVi:'Massage chân trị liệu',descVi:'Ngâm chân thảo dược + massage + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược',prices:[{duration:'90',amount:350000}],translations:{}},
-    {id:'m5', catId:'c1',active:true,nameVi:'Massage trị liệu thắt lưng eo',descVi:'Ngâm chân thảo dược + massage thắt lưng eo - chân + dầu trị liệu + đá nóng + đắp cao thảo dược + đắp mắt thảo dược',prices:[{duration:'60',amount:350000},{duration:'90',amount:450000}],translations:{}},
-    {id:'m6', catId:'c2',active:true,maleExtra:50000,nameVi:'Massage Body Aroma Therapy',descVi:'Ngâm chân thảo dược + massage + đắp mắt thảo dược',prices:[{duration:'70',amount:300000}],translations:{}},
-    {id:'m7', catId:'c2',active:true,maleExtra:50000,nameVi:'Massage Body đá nóng',descVi:'Ngâm chân thảo dược + massage + đá nóng + đắp mắt thảo dược',prices:[{duration:'90',amount:350000}],translations:{}},
-    {id:'m8', catId:'c2',active:true,maleExtra:50000,nameVi:'Massage Body trị liệu',descVi:'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + xông hơi',prices:[{duration:'110',amount:400000}],translations:{}},
-    {id:'m9', catId:'c2',active:true,maleExtra:50000,nameVi:'Massage Body Thụy Điển (chuyên sâu)',descVi:'Ngâm chân thảo dược + massage + đá nóng + dầu trị liệu + đắp cao thảo dược',prices:[{duration:'120',amount:450000}],translations:{}},
-    {id:'m10',catId:'c2',active:true,nameVi:'Massage bầu dưỡng sinh',descVi:'Massage chuyên biệt cho bà bầu',prices:[{duration:'60',amount:300000},{duration:'90',amount:350000},{duration:'120',amount:450000}],translations:{}},
-    {id:'m11',catId:'c2',active:true,nameVi:'Xông hơi đá muối',descVi:'Xông hơi với đá muối himalaya',prices:[{duration:'20-40',amount:150000}],translations:{}},
-    {id:'m12',catId:'c3',active:true,promo:true,nameVi:'Mặt',descVi:'Diện chẩn vùng mặt',prices:[{duration:'45-60',amount:200000}],translations:{}},
-    {id:'m13',catId:'c3',active:true,promo:true,nameVi:'Vai gáy',descVi:'Diện chẩn vùng vai gáy',prices:[{duration:'60',amount:250000},{duration:'90',amount:300000}],translations:{}},
-    {id:'m14',catId:'c3',active:true,promo:true,nameVi:'Lưng',descVi:'Diện chẩn vùng lưng',prices:[{duration:'60',amount:350000}],translations:{}},
-    {id:'m15',catId:'c3',active:true,promo:true,nameVi:'Full body',descVi:'Diện chẩn toàn thân',prices:[{duration:'120',amount:400000},{duration:'150',amount:500000}],translations:{}},
-    {id:'m16',catId:'c4',active:true,nameVi:'Combo 1',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược',prices:[{duration:'60',amount:150000}],translations:{}},
-    {id:'m17',catId:'c4',active:true,nameVi:'Combo 2',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược',prices:[{duration:'70',amount:180000}],translations:{}},
-    {id:'m18',catId:'c4',active:true,nameVi:'Combo 3',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược',prices:[{duration:'90',amount:250000}],translations:{}},
-    {id:'m19',catId:'c4',active:true,nameVi:'Combo 4',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + đắp mắt thảo dược + dẫn khí trị liệu + đắp mặt nạ + gội đầu thảo dược',prices:[{duration:'110',amount:350000}],translations:{}},
-    {id:'m20',catId:'c4',active:true,nameVi:'Combo 5',descVi:'Ngâm chân thảo dược + massage cổ vai gáy - tay chuyên sâu + massage mặt + đắp cao thảo dược + đắp mắt thảo dược + dẫn khí trị liệu + gội đầu thảo dược',prices:[{duration:'120',amount:400000}],translations:{}},
-    {id:'m21',catId:'c4',active:true,nameVi:'Combo 6',descVi:'Ngâm chân thảo dược + massage cổ vai gáy + massage tay chuyên sâu + massage chân + xông hơi hút mụn bã nhờn + đắp mắt thảo dược + dẫn khí trị liệu + massage mặt + đắp mặt nạ + gội đầu thảo dược',prices:[{duration:'140',amount:450000}],translations:{}},
-    {id:'m22',catId:'c5',active:true,nameVi:'Chăm sóc da cơ bản',descVi:'',prices:[{duration:'',amount:100000}],translations:{}},
-    {id:'m23',catId:'c5',active:true,nameVi:'Chăm sóc thư giãn',descVi:'',prices:[{duration:'',amount:200000}],translations:{}},
-    {id:'m24',catId:'c5',active:true,nameVi:'Chăm sóc da chuyên sâu',descVi:'',prices:[{duration:'',amount:350000}],translations:{}},
-    {id:'m25',catId:'c5',active:true,nameVi:'Nặn mụn chuẩn y khoa',descVi:'',prices:[{duration:'',amount:250000},{duration:'',amount:500000}],translations:{}},
-    {id:'m26',catId:'c5',active:true,nameVi:'Cấy tảo',descVi:'',prices:[{duration:'',amount:400000}],translations:{}},
-    {id:'m27',catId:'c5',active:true,nameVi:'Phun nốt ruồi phong thuỷ',descVi:'',prices:[{duration:'',amount:400000}],translations:{}},
-    {id:'m28',catId:'c5',active:true,nameVi:'Đốt nốt ruồi',descVi:'',prices:[{duration:'',amount:50000},{duration:'',amount:500000}],translations:{}},
-    {id:'m29',catId:'c5',active:true,nameVi:'Tắm dưỡng body',descVi:'',prices:[{duration:'',amount:500000}],translations:{}},
-    {id:'m30',catId:'c5',active:true,nameVi:'Làm hồng nhũ hoa',descVi:'',prices:[{duration:'',amount:3000000}],translations:{}},
-    {id:'m31',catId:'c5',active:true,nameVi:'Khử thâm bikini',descVi:'',prices:[{duration:'',amount:4500000}],translations:{}},
-    {id:'m32',catId:'c6',active:true,nameVi:'Nách',descVi:'',prices:[{label:'LT(10 buổi)',amount:1000000},{label:'Trọn đời',amount:2500000}],translations:{}},
-    {id:'m33',catId:'c6',active:true,nameVi:'Mép',descVi:'',prices:[{label:'LT(10 buổi)',amount:1000000},{label:'Trọn đời',amount:2500000}],translations:{}},
-    {id:'m34',catId:'c6',active:true,nameVi:'Mặt (triệt lông)',descVi:'',prices:[{label:'LT(10 buổi)',amount:2000000},{label:'Trọn đời',amount:4500000}],translations:{}},
-    {id:'m35',catId:'c6',active:true,nameVi:'1/2 tay',descVi:'',prices:[{label:'LT(10 buổi)',amount:2000000},{label:'Trọn đời',amount:4500000}],translations:{}},
-    {id:'m36',catId:'c6',active:true,nameVi:'Cả tay',descVi:'',prices:[{label:'LT(10 buổi)',amount:3000000},{label:'Trọn đời',amount:5500000}],translations:{}},
-    {id:'m37',catId:'c6',active:true,nameVi:'1/2 chân',descVi:'',prices:[{label:'LT(10 buổi)',amount:3000000},{label:'Trọn đời',amount:5500000}],translations:{}},
-    {id:'m38',catId:'c6',active:true,nameVi:'Cả chân',descVi:'',prices:[{label:'LT(10 buổi)',amount:4000000},{label:'Trọn đời',amount:6500000}],translations:{}},
-    {id:'m39',catId:'c6',active:true,nameVi:'Bikini',descVi:'',prices:[{label:'LT(10 buổi)',amount:3000000},{label:'Trọn đời',amount:5500000}],translations:{}},
-    {id:'m40',catId:'c6',active:true,nameVi:'Bụng - Ngực',descVi:'',prices:[{label:'LT(10 buổi)',amount:3500000},{label:'Trọn đời',amount:6000000}],translations:{}},
-    {id:'m41',catId:'c6',active:true,nameVi:'Lưng (triệt lông)',descVi:'',prices:[{label:'LT(10 buổi)',amount:4000000},{label:'Trọn đời',amount:6500000}],translations:{}},
-    {id:'m42',catId:'c6',active:true,nameVi:'Toàn thân',descVi:'',prices:[{label:'LT(10 buổi)',amount:16000000},{label:'Trọn đời',amount:21000000}],translations:{}}
+    {id:'m1',catId:'c1',active:true,
+      nameVi:'Massage co vai gay tri lieu',
+      descVi:'Ngam chan thao duoc + massage co vai gay - tay + da nong + dau tri lieu + dap mat thao duoc',
+      prices:[{duration:'60',amount:250000},{duration:'90',amount:300000}],
+      translations:{ko:'어깨·목 치료 마사지',en:'Neck & Shoulder Therapy',ja:'首・肩の治療マッサージ',zh:'颈肩治疗按摩',th:'นวดบำบัดคอและไหล่',ms:'Urut Terapi Leher & Bahu',ru:'Терапия шеи и плеч'}},
+    {id:'m2',catId:'c1',active:true,
+      nameVi:'Da thong kinh lac lung vai co gay - tay chuyen sau',
+      descVi:'Ngam chan thao duoc + massage tri lieu + dau tri lieu + da nong + dap mat thao duoc + xong hoi',
+      prices:[{duration:'90',amount:350000}],
+      translations:{ko:'심층 경락 마사지',en:'Deep Meridian Massage',ja:'深層経絡マッサージ',zh:'深度经络按摩',th:'นวดเส้นลึก',ms:'Urut Meridian Dalam',ru:'Меридианный массаж'}},
+    {id:'m3',catId:'c1',active:true,
+      nameVi:'Massage chan thu gian',
+      descVi:'Ngam chan thao duoc + massage + da nong + dap mat thao duoc',
+      prices:[{duration:'60',amount:250000}],
+      translations:{ko:'발 릴렉스 마사지',en:'Relaxing Foot Massage',ja:'リラクゼーションフットマッサージ',zh:'放松足部按摩',th:'นวดเท้าผ่อนคลาย',ms:'Urut Kaki Relaks',ru:'Расслабляющий массаж стоп'}},
+    {id:'m4',catId:'c1',active:true,
+      nameVi:'Massage chan tri lieu',
+      descVi:'Ngam chan thao duoc + massage + dau tri lieu + da nong + dap cao thao duoc + dap mat thao duoc',
+      prices:[{duration:'90',amount:350000}],
+      translations:{ko:'발 치료 마사지',en:'Therapeutic Foot Massage',ja:'治療フットマッサージ',zh:'足部治疗按摩',th:'นวดเท้าบำบัด',ms:'Urut Kaki Terapi',ru:'Терапевтический массаж стоп'}},
+    {id:'m5',catId:'c1',active:true,
+      nameVi:'Massage tri lieu that lung eo',
+      descVi:'Ngam chan thao duoc + massage that lung eo - chan + dau tri lieu + da nong + dap cao thao duoc + dap mat thao duoc',
+      prices:[{duration:'60',amount:350000},{duration:'90',amount:450000}],
+      translations:{ko:'허리 치료 마사지',en:'Lower Back Therapy',ja:'腰部治療マッサージ',zh:'腰部治疗按摩',th:'นวดบำบัดเอว',ms:'Urut Terapi Pinggang',ru:'Терапия поясницы'}},
+    {id:'m6',catId:'c2',active:true,maleExtra:50000,
+      nameVi:'Massage Body Aroma Therapy',
+      descVi:'Ngam chan thao duoc + massage + dap mat thao duoc',
+      prices:[{duration:'70',amount:300000}],
+      translations:{ko:'바디 아로마 테라피',en:'Body Aroma Therapy',ja:'ボディアロマセラピー',zh:'身体芳香疗法',th:'บอดี้อโรมาเธอราพี',ms:'Aroma Terapi Badan',ru:'Аромамассаж тела'}},
+    {id:'m7',catId:'c2',active:true,maleExtra:50000,
+      nameVi:'Massage Body da nong',
+      descVi:'Ngam chan thao duoc + massage + da nong + dap mat thao duoc',
+      prices:[{duration:'90',amount:350000}],
+      translations:{ko:'핫스톤 바디 마사지',en:'Hot Stone Body Massage',ja:'ホットストーンボディマッサージ',zh:'热石身体按摩',th:'นวดตัวหินร้อน',ms:'Urut Badan Batu Panas',ru:'Массаж с горячими камнями'}},
+    {id:'m8',catId:'c2',active:true,maleExtra:50000,
+      nameVi:'Massage Body tri lieu',
+      descVi:'Ngam chan thao duoc + massage + da nong + dau tri lieu + xong hoi',
+      prices:[{duration:'110',amount:400000}],
+      translations:{ko:'바디 치료 마사지',en:'Body Therapy Massage',ja:'ボディ治療マッサージ',zh:'身体治疗按摩',th:'นวดบำบัดตัว',ms:'Urut Terapi Badan',ru:'Терапевтический массаж тела'}},
+    {id:'m9',catId:'c2',active:true,maleExtra:50000,
+      nameVi:'Massage Body Thuy Dien (chuyen sau)',
+      descVi:'Ngam chan thao duoc + massage + da nong + dau tri lieu + dap cao thao duoc',
+      prices:[{duration:'120',amount:450000}],
+      translations:{ko:'스웨디시 바디 마사지 (심층)',en:'Swedish Body Massage (Deep)',ja:'スウェーデン式ボディマッサージ',zh:'瑞典式深层按摩',th:'นวดสวีดิชตัว (เชิงลึก)',ms:'Urut Badan Sweden (Dalam)',ru:'Шведский массаж тела'}},
+    {id:'m10',catId:'c2',active:true,
+      nameVi:'Massage bau duong sinh',
+      descVi:'Massage chuyen biet cho ba bau',
+      prices:[{duration:'60',amount:300000},{duration:'90',amount:350000},{duration:'120',amount:450000}],
+      translations:{ko:'임산부 마사지',en:'Prenatal Massage',ja:'マタニティマッサージ',zh:'孕妇按摩',th:'นวดสำหรับหญิงตั้งครรภ์',ms:'Urut Ibu Mengandung',ru:'Массаж для беременных'}},
+    {id:'m11',catId:'c2',active:true,
+      nameVi:'Xong hoi da muoi',
+      descVi:'Xong hoi voi da muoi himalaya',
+      prices:[{duration:'20-40',amount:150000}],
+      translations:{ko:'히말라야 소금돌 사우나',en:'Himalayan Salt Sauna',ja:'ヒマラヤ岩塩サウナ',zh:'喜马拉雅盐石桑拿',th:'ซาวน่าเกลือหิมาลายา',ms:'Sauna Garam Himalaya',ru:'Сауна с гималайской солью'}},
+    {id:'m12',catId:'c3',active:true,promo:true,
+      nameVi:'Mat',descVi:'Dien chan vung mat',
+      prices:[{duration:'45-60',amount:200000}],
+      translations:{ko:'얼굴',en:'Face',ja:'顔',zh:'面部',th:'ใบหน้า',ms:'Muka',ru:'Лицо'}},
+    {id:'m13',catId:'c3',active:true,promo:true,
+      nameVi:'Vai gay',descVi:'Dien chan vung vai gay',
+      prices:[{duration:'60',amount:250000},{duration:'90',amount:300000}],
+      translations:{ko:'어깨·목',en:'Shoulder & Neck',ja:'肩・首',zh:'肩颈',th:'ไหล่และคอ',ms:'Bahu & Leher',ru:'Плечи и шея'}},
+    {id:'m14',catId:'c3',active:true,promo:true,
+      nameVi:'Lung',descVi:'Dien chan vung lung',
+      prices:[{duration:'60',amount:350000}],
+      translations:{ko:'등',en:'Back',ja:'背中',zh:'背部',th:'หลัง',ms:'Belakang',ru:'Спина'}},
+    {id:'m15',catId:'c3',active:true,promo:true,
+      nameVi:'Full body',descVi:'Dien chan toan than',
+      prices:[{duration:'120',amount:400000},{duration:'150',amount:500000}],
+      translations:{ko:'전신',en:'Full Body',ja:'全身',zh:'全身',th:'ทั้งตัว',ms:'Seluruh Badan',ru:'Всё тело'}},
+    {id:'m16',catId:'c4',active:true,
+      nameVi:'Combo 1',descVi:'Ngam chan thao duoc + massage co vai gay + dap mat thao duoc + dan khi tri lieu + goi dau thao duoc',
+      prices:[{duration:'60',amount:150000}],
+      translations:{ko:'콤보 1',en:'Combo 1',ja:'コンボ 1',zh:'套餐 1',th:'คอมโบ 1',ms:'Kombo 1',ru:'Комбо 1'}},
+    {id:'m17',catId:'c4',active:true,
+      nameVi:'Combo 2',descVi:'Ngam chan thao duoc + massage co vai gay + dap mat thao duoc + dan khi tri lieu + dap mat na + goi dau thao duoc',
+      prices:[{duration:'70',amount:180000}],
+      translations:{ko:'콤보 2',en:'Combo 2',ja:'コンボ 2',zh:'套餐 2',th:'คอมโบ 2',ms:'Kombo 2',ru:'Комбо 2'}},
+    {id:'m18',catId:'c4',active:true,
+      nameVi:'Combo 3',descVi:'Ngam chan thao duoc + massage co vai gay - tay chuyen sau + dap mat thao duoc + dan khi tri lieu + dap mat na + goi dau thao duoc',
+      prices:[{duration:'90',amount:250000}],
+      translations:{ko:'콤보 3',en:'Combo 3',ja:'コンボ 3',zh:'套餐 3',th:'คอมโบ 3',ms:'Kombo 3',ru:'Комбо 3'}},
+    {id:'m19',catId:'c4',active:true,
+      nameVi:'Combo 4',descVi:'Ngam chan thao duoc + massage co vai gay - tay chuyen sau + dap mat thao duoc + dan khi tri lieu + dap mat na + goi dau thao duoc',
+      prices:[{duration:'110',amount:350000}],
+      translations:{ko:'콤보 4',en:'Combo 4',ja:'コンボ 4',zh:'套餐 4',th:'คอมโบ 4',ms:'Kombo 4',ru:'Комбо 4'}},
+    {id:'m20',catId:'c4',active:true,
+      nameVi:'Combo 5',descVi:'Ngam chan thao duoc + massage co vai gay - tay chuyen sau + massage mat + dap cao thao duoc + dap mat thao duoc + dan khi tri lieu + goi dau thao duoc',
+      prices:[{duration:'120',amount:400000}],
+      translations:{ko:'콤보 5',en:'Combo 5',ja:'コンボ 5',zh:'套餐 5',th:'คอมโบ 5',ms:'Kombo 5',ru:'Комбо 5'}},
+    {id:'m21',catId:'c4',active:true,
+      nameVi:'Combo 6',descVi:'Ngam chan thao duoc + massage co vai gay + massage tay chuyen sau + massage chan + xong hoi hut mun ba nhon + dap mat thao duoc + dan khi tri lieu + massage mat + dap mat na + goi dau thao duoc',
+      prices:[{duration:'140',amount:450000}],
+      translations:{ko:'콤보 6',en:'Combo 6',ja:'コンボ 6',zh:'套餐 6',th:'คอมโบ 6',ms:'Kombo 6',ru:'Комбо 6'}},
+    {id:'m22',catId:'c5',active:true,nameVi:'Cham soc da co ban',descVi:'',prices:[{duration:'',amount:100000}],
+      translations:{ko:'기본 피부 관리',en:'Basic Skin Care',ja:'ベーシックスキンケア',zh:'基础皮肤护理',th:'ดูแลผิวเบื้องต้น',ms:'Penjagaan Kulit Asas',ru:'Базовый уход'}},
+    {id:'m23',catId:'c5',active:true,nameVi:'Cham soc thu gian',descVi:'',prices:[{duration:'',amount:200000}],
+      translations:{ko:'릴렉싱 피부 관리',en:'Relaxing Skin Care',ja:'リラックスケア',zh:'舒缓皮肤护理',th:'ดูแลผิวผ่อนคลาย',ms:'Penjagaan Kulit Relaks',ru:'Расслабляющий уход'}},
+    {id:'m24',catId:'c5',active:true,nameVi:'Cham soc da chuyen sau',descVi:'',prices:[{duration:'',amount:350000}],
+      translations:{ko:'심층 피부 관리',en:'Deep Skin Care',ja:'ディープスキンケア',zh:'深层皮肤护理',th:'ดูแลผิวเชิงลึก',ms:'Penjagaan Kulit Mendalam',ru:'Глубокий уход'}},
+    {id:'m25',catId:'c5',active:true,nameVi:'Nan mun chuan y khoa',descVi:'',prices:[{duration:'',amount:250000},{duration:'',amount:500000}],
+      translations:{ko:'의료 블랙헤드 제거',en:'Medical Acne Extraction',ja:'医療ニキビ絞り',zh:'医学祛痘',th:'บีบสิวมาตรฐานการแพทย์',ms:'Peras Jerawat Perubatan',ru:'Медицинское удаление акне'}},
+    {id:'m26',catId:'c5',active:true,nameVi:'Cay tao',descVi:'',prices:[{duration:'',amount:400000}],
+      translations:{ko:'해조 주입',en:'Algae Infusion',ja:'藻類インフュージョン',zh:'藻类注入',th:'ฉีดสาหร่าย',ms:'Infusi Alga',ru:'Водорослевая инфузия'}},
+    {id:'m27',catId:'c5',active:true,nameVi:'Phun not ruoi phong thuy',descVi:'',prices:[{duration:'',amount:400000}],
+      translations:{ko:'풍수 점 문신',en:'Feng Shui Mole Tattoo',ja:'風水ほくろ',zh:'风水痣',th:'สักไฝฮวงจุ้ย',ms:'Tatu Tahi Lalat Feng Shui',ru:'Татуировка фэн-шуй'}},
+    {id:'m28',catId:'c5',active:true,nameVi:'Dot not ruoi',descVi:'',prices:[{duration:'',amount:50000},{duration:'',amount:500000}],
+      translations:{ko:'점 제거',en:'Mole Removal',ja:'ほくろ除去',zh:'去痣',th:'เผาไฝ',ms:'Buang Tahi Lalat',ru:'Удаление родинок'}},
+    {id:'m29',catId:'c5',active:true,nameVi:'Tam duong body',descVi:'',prices:[{duration:'',amount:500000}],
+      translations:{ko:'바디 영양 목욕',en:'Body Nourishing Bath',ja:'ボディバス',zh:'滋养浴',th:'อาบน้ำบำรุง',ms:'Mandi Badan',ru:'Питательная ванна'}},
+    {id:'m30',catId:'c5',active:true,nameVi:'Lam hong nhu hoa',descVi:'',prices:[{duration:'',amount:3000000}],
+      translations:{ko:'유두 미백',en:'Nipple Brightening',ja:'乳首ホワイトニング',zh:'乳晕美白',th:'ทำชมพูหัวนม',ms:'Pencerah Puting',ru:'Осветление сосков'}},
+    {id:'m31',catId:'c5',active:true,nameVi:'Khu tham bikini',descVi:'',prices:[{duration:'',amount:4500000}],
+      translations:{ko:'비키니 미백',en:'Bikini Whitening',ja:'ビキニラインホワイトニング',zh:'比基尼美白',th:'ลดรอยดำบิกินี่',ms:'Pencerah Bikini',ru:'Осветление бикини'}},
+    {id:'m32',catId:'c6',active:true,nameVi:'Nach',descVi:'',prices:[{label:'LT(10 buoi)',amount:1000000},{label:'Tron doi',amount:2500000}],
+      translations:{ko:'겨드랑이',en:'Underarm',ja:'脇',zh:'腋下',th:'รักแร้',ms:'Ketiak',ru:'Подмышки'}},
+    {id:'m33',catId:'c6',active:true,nameVi:'Mep',descVi:'',prices:[{label:'LT(10 buoi)',amount:1000000},{label:'Tron doi',amount:2500000}],
+      translations:{ko:'입 주위',en:'Upper Lip',ja:'口元',zh:'嘴边',th:'ริมฝีปาก',ms:'Misai',ru:'Над губой'}},
+    {id:'m34',catId:'c6',active:true,nameVi:'Mat (triet long)',descVi:'',prices:[{label:'LT(10 buoi)',amount:2000000},{label:'Tron doi',amount:4500000}],
+      translations:{ko:'얼굴 제모',en:'Face (Hair Removal)',ja:'顔（脱毛）',zh:'面部脱毛',th:'ใบหน้า (กำจัดขน)',ms:'Muka (Penyingkiran Bulu)',ru:'Лицо (эпиляция)'}},
+    {id:'m35',catId:'c6',active:true,nameVi:'1/2 tay',descVi:'',prices:[{label:'LT(10 buoi)',amount:2000000},{label:'Tron doi',amount:4500000}],
+      translations:{ko:'팔 1/2',en:'Half Arm',ja:'腕 1/2',zh:'半臂',th:'แขนครึ่ง',ms:'Separuh Tangan',ru:'Полруки'}},
+    {id:'m36',catId:'c6',active:true,nameVi:'Ca tay',descVi:'',prices:[{label:'LT(10 buoi)',amount:3000000},{label:'Tron doi',amount:5500000}],
+      translations:{ko:'팔 전체',en:'Full Arm',ja:'腕 全体',zh:'全臂',th:'แขนทั้งหมด',ms:'Keseluruhan Tangan',ru:'Вся рука'}},
+    {id:'m37',catId:'c6',active:true,nameVi:'1/2 chan',descVi:'',prices:[{label:'LT(10 buoi)',amount:3000000},{label:'Tron doi',amount:5500000}],
+      translations:{ko:'다리 1/2',en:'Half Leg',ja:'足 1/2',zh:'半腿',th:'ขาครึ่ง',ms:'Separuh Kaki',ru:'Полноги'}},
+    {id:'m38',catId:'c6',active:true,nameVi:'Ca chan',descVi:'',prices:[{label:'LT(10 buoi)',amount:4000000},{label:'Tron doi',amount:6500000}],
+      translations:{ko:'다리 전체',en:'Full Leg',ja:'足 全体',zh:'全腿',th:'ขาทั้งหมด',ms:'Keseluruhan Kaki',ru:'Вся нога'}},
+    {id:'m39',catId:'c6',active:true,nameVi:'Bikini',descVi:'',prices:[{label:'LT(10 buoi)',amount:3000000},{label:'Tron doi',amount:5500000}],
+      translations:{ko:'비키니',en:'Bikini',ja:'ビキニ',zh:'比基尼',th:'บิกินี่',ms:'Bikini',ru:'Бикини'}},
+    {id:'m40',catId:'c6',active:true,nameVi:'Bung - Nguc',descVi:'',prices:[{label:'LT(10 buoi)',amount:3500000},{label:'Tron doi',amount:6000000}],
+      translations:{ko:'복부·가슴',en:'Abdomen & Chest',ja:'お腹・胸',zh:'腹胸',th:'หน้าท้อง - หน้าอก',ms:'Perut - Dada',ru:'Живот - Грудь'}},
+    {id:'m41',catId:'c6',active:true,nameVi:'Lung (triet long)',descVi:'',prices:[{label:'LT(10 buoi)',amount:4000000},{label:'Tron doi',amount:6500000}],
+      translations:{ko:'등 제모',en:'Back (Hair Removal)',ja:'背中（脱毛）',zh:'背部脱毛',th:'หลัง (กำจัดขน)',ms:'Belakang (Penyingkiran Bulu)',ru:'Спина (эпиляция)'}},
+    {id:'m42',catId:'c6',active:true,nameVi:'Toan than',descVi:'',prices:[{label:'LT(10 buoi)',amount:16000000},{label:'Tron doi',amount:21000000}],
+      translations:{ko:'전신 제모',en:'Full Body (Hair Removal)',ja:'全身（脱毛）',zh:'全身脱毛',th:'ทั้งตัว (กำจัดขน)',ms:'Seluruh Badan (Penyingkiran Bulu)',ru:'Всё тело (эпиляция)'}}
   ]
 };
 
-// ── Firebase SDK (CDN, no build tools needed) ──
-// Loaded via <script type="module"> in each HTML file
-// This file exports FDB object for use in all pages
+// ── Google Translate 무료 API (신규 메뉴 추가 시 사용) ──
+async function translateViaGoogle(text) {
+  if (!text || !text.trim()) return {};
+  const langs  = ['ko','en','ja','zh-CN','th','ms','ru'];
+  const labels = ['ko','en','ja','zh',   'th','ms','ru'];
+  const results = {};
+  const base = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=vi&dt=t&q=';
+  await Promise.all(langs.map(async (lang, i) => {
+    try {
+      const url = base + encodeURIComponent(text) + '&tl=' + lang;
+      const resp = await fetch(url);
+      const data = await resp.json();
+      results[labels[i]] = data[0].map(item => item[0]).join('');
+    } catch(e) {
+      results[labels[i]] = text;
+    }
+  }));
+  return results;
+}
 
-// ── Utility helpers (non-async, used everywhere) ──
+// ── Utility helpers (window.DB) ──
 window.DB = (function(){
-  function genId(prefix){
-    return (prefix||'id')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-  }
+  function genId(p){ return (p||'id')+'_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
   function fmtMoney(n){
     if(n===undefined||n===null||n==='') return '';
     var num=Number(n); if(isNaN(num)) return '';
     if(num===0) return '0₫';
     return num.toLocaleString('vi-VN')+'₫';
   }
-  function fmtDate(ts){
-    if(!ts) return '';
-    return new Date(ts).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
-  }
-  function fmtTime(ts){
-    if(!ts) return '';
-    return new Date(ts).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-  }
+  function fmtDate(ts){ if(!ts) return ''; return new Date(ts).toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+  function fmtTime(ts){ if(!ts) return ''; return new Date(ts).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}); }
   function fmtDateTime(ts){
     if(!ts) return '';
     var d=new Date(ts);
-    return d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})+' '+
-           d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
+    return d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})+' '+d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'});
   }
   function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
   function exportToCSV(filename,headers,rows){
     var BOM='\uFEFF';
     var lines=[headers].concat(rows).map(function(row){
-      return row.map(function(cell){
-        return '"'+String(cell==null?'':cell).replace(/"/g,'""')+'"';
-      }).join(',');
+      return row.map(function(cell){ return '"'+String(cell==null?'':cell).replace(/"/g,'""')+'"'; }).join(',');
     });
-    var csv=BOM+lines.join('\n');
-    var blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+    var blob=new Blob([BOM+lines.join('\n')],{type:'text/csv;charset=utf-8'});
     var url=URL.createObjectURL(blob);
-    var a=document.createElement('a');
-    a.href=url; a.download=filename; a.click();
+    var a=document.createElement('a'); a.href=url; a.download=filename; a.click();
     setTimeout(function(){URL.revokeObjectURL(url);},1000);
   }
-  function escHtml(s){
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
   return {
-    genId:genId, fmtMoney:fmtMoney, fmtDate:fmtDate,
-    fmtTime:fmtTime, fmtDateTime:fmtDateTime,
-    deepClone:deepClone, exportToCSV:exportToCSV, escHtml:escHtml,
-    DEFAULT_DATA:DEFAULT_DATA, FIREBASE_CONFIG:FIREBASE_CONFIG
+    genId, fmtMoney, fmtDate, fmtTime, fmtDateTime,
+    deepClone, exportToCSV, escHtml,
+    DEFAULT_DATA, FIREBASE_CONFIG,
+    translateViaGoogle
   };
 })();
