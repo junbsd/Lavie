@@ -192,11 +192,34 @@ const TITLES={vi:'Bảng Giá Dịch Vụ',ko:'서비스 가격표',en:'Service 
 const MIN_L={vi:'phút',ko:'분',en:'min',ja:'分',zh:'分钟',th:'นาที',ms:'minit',ru:'мин'};
 const NOTE_MALE={vi:'★ Khách nam phụ thu thêm 50k/người',ko:'★ 남성 고객 50k 추가',en:'★ Male guests: +50k',ja:'★ 男性お客様 +50k',zh:'★ 男性顾客额外50k',th:'★ ลูกค้าชาย +50k',ms:'★ Pelanggan lelaki +50k',ru:'★ Мужчины +50k'};
 
+// ── Firestore getDoc with timeout ──
+function getDocWithTimeout(ref, ms=6000) {
+  return Promise.race([
+    getDoc(ref),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), ms))
+  ]);
+}
+
 // ── Load all data from Firestore, initializing defaults if needed ──
 async function loadAll() {
   // Config doc (categories, menus, beds)
   const configRef = doc(fs, 'config', 'main');
-  let configSnap  = await getDoc(configRef);
+  let configSnap;
+  try {
+    configSnap = await getDocWithTimeout(configRef, 6000);
+  } catch(e) {
+    // 타임아웃 또는 네트워크 오류 → DEFAULT_DATA로 오프라인 모드
+    console.warn('Firestore 연결 실패, 기본 데이터로 실행:', e.message);
+    appData.categories = DB.DEFAULT_DATA.categories;
+    appData.menus      = DB.DEFAULT_DATA.menus;
+    appData.beds       = DB.DEFAULT_DATA.beds;
+    appData.therapists = DB.DEFAULT_DATA.therapists;
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('appBody').style.display = 'block';
+    currentCat = appData.categories[0]?.id || null;
+    renderAll();
+    return;
+  }
 
   // ── 번역 버전 관리: db.js가 바뀌면 자동으로 Firestore 업데이트 ──
   const TRANS_VERSION = 'v6_desc'; // 버전 바꾸면 강제 업데이트
@@ -459,7 +482,7 @@ async function loadWithRetry() {
     console.error('Load error (attempt ' + loadRetries + '):', e);
     if (loadRetries < 3) {
       document.querySelector('.loading-text').textContent = 'Đang thử lại... (' + loadRetries + '/3)';
-      setTimeout(loadWithRetry, 2000);
+      setTimeout(loadWithRetry, 1500);
     } else {
       document.querySelector('.loading-text').textContent = 'Lỗi kết nối. Vui lòng tải lại trang.';
       document.querySelector('.loading-text').style.color = '#C0392B';
